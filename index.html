@@ -1698,7 +1698,7 @@ document.addEventListener('click', function(e) {
         const nextSi  = si + 1;
         const nextSet = b.sets && b.sets[nextSi];
         const nextInfo = nextSet
-          ? `세트 ${nextSet.set === 'WU' ? 'WU' : nextSi} · ${nextSet.reps} RPE ${nextSet.rpe}`
+          ? `세트 ${nextSet.set} · ${nextSet.reps} RPE ${nextSet.rpe}`
           : '마지막 세트 완료 🎉';
         startRestTimer(b.rest, b.title, nextInfo, day.accent);
       }
