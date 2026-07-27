@@ -1351,7 +1351,8 @@ function renderCalendar() {
     const hasRec   = !!workoutHistory[dStr];
     const isSel    = dStr === calSelectedDate;
     const rec      = workoutHistory[dStr];
-    const dayLabel = hasRec ? (rec.dayKey === 'dayA' ? 'A' : 'B') : '';
+    const DAY_LABEL_MAP = {dayA:'A', dayB:'B', dayGa:'가', dayNa:'나', dayDa:'다'};
+    const dayLabel = hasRec ? (DAY_LABEL_MAP[rec.dayKey] || '?') : '';
     let cls = 'cal-day';
     if (dow === 0) cls += ' sun';
     if (dow === 6) cls += ' sat';
@@ -1426,8 +1427,8 @@ function buildCalDetail(dStr) {
 
   const day = ROUTINE[rec.dayKey];
   if (!day) return `<div class="cal-detail"><div style="padding:16px;text-align:center;color:#475569;font-size:12px">기록 형식 오류</div></div>`;
-  const dayName = rec.dayKey === 'dayA' ? 'Day A' : 'Day B';
-  const accent  = rec.dayKey === 'dayA' ? '#f97316' : '#a78bfa';
+  const dayName = day.label;
+  const accent  = day.accent;
 
   let blocks = '';
   // 러닝
