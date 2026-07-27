@@ -587,6 +587,76 @@ function readGithubForm() {
     folder: document.getElementById('gh-folder').value.trim() || 'backup',
   };
 }
+// GitHub 백업 폴더에서 최신 파일 자동 로드
+async function githubAutoSync(silent) {
+  const cfg = getGithubConfig();
+  if (!cfg || !cfg.owner || !cfg.repo || !cfg.token) return false;
+
+  try {
+    if (!silent) showToast('🐙 GitHub 확인 중...', 8000);
+    const folderUrl = 'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' + cfg.folder;
+    const listRes = await fetch(folderUrl, {
+      headers: {'Authorization': 'Bearer ' + cfg.token, 'Accept': 'application/vnd.github+json'}
+    });
+    if (!listRes.ok) return false;
+
+    const files = await listRes.json();
+    if (!Array.isArray(files) || files.length === 0) return false;
+
+    // gym_backup_*.json 파일 중 이름(날짜) 기준 가장 최신 파일 찾기
+    const backups = files
+      .filter(f => f.name && f.name.startsWith('gym_backup_') && f.name.endsWith('.json'))
+      .sort((a, b) => b.name.localeCompare(a.name)); // 날짜 문자열 내림차순
+
+    if (backups.length === 0) return false;
+    const latest = backups[0];
+
+    // 파일 내용 가져오기
+    const fileRes = await fetch(latest.url, {
+      headers: {'Authorization': 'Bearer ' + cfg.token, 'Accept': 'application/vnd.github+json'}
+    });
+    if (!fileRes.ok) return false;
+    const fileData = await fileRes.json();
+    const decoded = decodeURIComponent(escape(atob(fileData.content.replace(/\n/g, ''))));
+    const data = JSON.parse(decoded);
+
+    // 로컬 저장 시각(activeDay 저장 시점)과 비교 — exportedAt 기준
+    const localExportedAt = (function() {
+      try {
+        const b = localStorage.getItem('gym_last_exported_at');
+        return b || null;
+      } catch(_) { return null; }
+    })();
+
+    if (data.exportedAt && localExportedAt && data.exportedAt <= localExportedAt) {
+      // 로컬이 이미 최신이거나 같음 → 스킵
+      if (!silent) showToast('✓ 이미 최신 상태입니다');
+      return false;
+    }
+
+    // 데이터 반영
+    if (data.weightInputs) {
+      weightInputs = data.weightInputs;
+      Object.entries(weightInputs).forEach(([title, val]) => {
+        if (WEIGHT_RECORDS[title]) WEIGHT_RECORDS[title].kg = val.kg;
+        else WEIGHT_RECORDS[title] = {kg: val.kg, bothSide: val.bothSide, date: TODAY};
+      });
+    }
+    if (data.history) workoutHistory = data.history;
+    if (data.checks && data.saveDate === TODAY)  checks  = data.checks;
+    if (data.runDone && data.saveDate === TODAY) runDone = data.runDone;
+
+    try { localStorage.setItem('gym_last_exported_at', data.exportedAt || new Date().toISOString()); } catch(_) {}
+    saveToStorage();
+    renderDay();
+    showToast('✓ GitHub 최신 기록 불러옴 (' + latest.name + ')');
+    return true;
+  } catch(e) {
+    if (!silent) showToast('❌ 자동 동기화 실패: ' + e.message);
+    return false;
+  }
+}
+
 async function githubBackup() {
   const cfg = getGithubConfig();
   if (!cfg || !cfg.owner || !cfg.repo || !cfg.token) {
@@ -621,6 +691,7 @@ async function githubBackup() {
       body: JSON.stringify(body),
     });
     if (res.ok) {
+      try { localStorage.setItem('gym_last_exported_at', data.exportedAt); } catch(_) {}
       showToast('✓ GitHub 백업 완료 (' + fileName + ')');
     } else {
       const err = await res.json();
@@ -1771,6 +1842,8 @@ document.addEventListener('change', function(e) {
 // ── 14. 초기 실행 ─────────────────────────────────────────
 loadFromStorage();
 renderDay();
+// GitHub 설정이 있으면 백그라운드에서 최신 기록 자동 동기화
+setTimeout(() => { githubAutoSync(true).catch(()=>{}); }, 500);
 </script>
 </body>
 </html>
