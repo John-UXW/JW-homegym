@@ -331,7 +331,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
         🔄 완료 초기화
       </button>
     </div>
-    <button class="btn-all" id="btn-all" style="background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);color:#a5b4fc">⚡ 전체 일괄 완료</button>
+    <button class="btn-all" id="btn-all" style="background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#4ade80">🏁 오늘 운동 종료</button>
   </div>
   <div class="order-note" id="order-note"></div>
   <button class="rpe-toggle" onclick="toggleRpe()"><span>📊 RPE 강도 기준표</span><span id="rpe-chevron">▼ 열기</span></button>
@@ -1120,18 +1120,7 @@ function updateProgress() {
   document.getElementById('prog-fill').style.width = p + '%';
   document.getElementById('prog-fill').style.background = p === 100 ? '#22c55e' : day.accent;
   document.getElementById('party-emoji').classList.toggle('hidden', p !== 100);
-  const btnAll = document.getElementById('btn-all');
-  if (p === 100) {
-    btnAll.style.background = 'rgba(34,197,94,0.15)';
-    btnAll.style.border = '1px solid rgba(34,197,94,0.3)';
-    btnAll.style.color = '#4ade80';
-    btnAll.textContent = '✓ 전체 완료됨';
-  } else {
-    btnAll.style.background = 'rgba(99,102,241,0.15)';
-    btnAll.style.border = '1px solid rgba(99,102,241,0.3)';
-    btnAll.style.color = '#a5b4fc';
-    btnAll.textContent = '⚡ 전체 일괄 완료';
-  }
+  // 오늘 운동 종료 버튼은 진행률과 무관하게 항상 저장 기능 유지 (스타일 고정)
   const PROG_MAP = {dayA:'a', dayB:'b', dayGa:'ga', dayNa:'na', dayDa:'da'};
   Object.entries(PROG_MAP).forEach(([dk, id]) => {
     const el = document.getElementById('tabprog-' + id);
@@ -1141,13 +1130,11 @@ function updateProgress() {
 
 // ── 8. 전체 완료 ──────────────────────────────────────────
 function checkAll() {
-  const day = ROUTINE[activeDay];
-  runDone[activeDay] = true;
-  day.blocks.forEach((b, bi) => {
-    if (b.hidden || b.isRunning) return;
-    (b.sets || []).forEach((s, si) => { checks[activeDay][bi + '-' + si] = true; });
-  });
-  saveToStorage(); snapshotToday(); renderDay();
+  // 현재 체크된 상태 그대로 오늘(또는 수정 중인 날짜) 기록으로 저장
+  saveToStorage();
+  snapshotToday();
+  renderDay();
+  showToast('✓ 오늘 운동 기록 저장 완료');
 }
 
 // ── 9. RPE 패널 ───────────────────────────────────────────
