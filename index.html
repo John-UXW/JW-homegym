@@ -1366,6 +1366,15 @@ document.addEventListener('visibilitychange', () => {
 
 // ── 알림 권한 요청 (최초 1회, 조용히) ─────────────────────
 let _notifyPermission = 'default';
+// ── Service Worker 등록 (백그라운드 알림용) ───────────────
+let _swRegistration = null;
+async function registerServiceWorker() {
+  try {
+    if (!('serviceWorker' in navigator)) return;
+    _swRegistration = await navigator.serviceWorker.register('./sw.js');
+  } catch(e) { /* sw.js 없거나 등록 실패 - 조용히 무시 */ }
+}
+
 function ensureNotifyPermission() {
   try {
     if (!('Notification' in window)) return;
@@ -1377,13 +1386,30 @@ function ensureNotifyPermission() {
 }
 function fireRestNotification(title, body) {
   try {
-    if ('Notification' in window && Notification.permission === 'granted') {
-      const n = new Notification(title, {
-        body: body,
-        icon: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI0IiBmaWxsPSIjMDgwODEwIi8+PHRleHQgeD0iNjQiIHk9Ijg1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjcyIj7wn4+3PC90ZXh0Pjwvc3ZnPg==',
-        silent: false,
+    if (Notification.permission !== 'granted') return;
+    const iconData = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI0IiBmaWxsPSIjMDgwODEwIi8+PHRleHQgeD0iNjQiIHk9Ijg1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjcyIj7wn4+3PC90ZXh0Pjwvc3ZnPg==';
+
+    // 1순위: Service Worker를 통한 알림 (모바일 크롬 백그라운드 지원)
+    if (_swRegistration && _swRegistration.active) {
+      _swRegistration.active.postMessage({
+        type: 'SHOW_NOTIFICATION',
+        title, body, icon: iconData,
+        vibrate: [200, 100, 200],
         tag: 'gym-rest-timer',
       });
+      return;
+    }
+    // 2순위: Service Worker showNotification 직접 호출
+    if (_swRegistration) {
+      _swRegistration.showNotification(title, {
+        body, icon: iconData, badge: iconData,
+        vibrate: [200, 100, 200], tag: 'gym-rest-timer', renotify: true,
+      });
+      return;
+    }
+    // 3순위: 데스크톱 fallback (모바일에선 무시됨)
+    if ('Notification' in window) {
+      const n = new Notification(title, { body, icon: iconData, tag: 'gym-rest-timer' });
       setTimeout(() => { try { n.close(); } catch(_){} }, 8000);
     }
   } catch(_) {}
@@ -1928,6 +1954,7 @@ document.addEventListener('change', function(e) {
 // ── 14. 초기 실행 ─────────────────────────────────────────
 loadFromStorage();
 renderDay();
+registerServiceWorker();
 // GitHub 설정이 있으면 백그라운드에서 최신 기록 자동 동기화
 setTimeout(() => { githubAutoSync(true).catch(()=>{}); }, 500);
 </script>
