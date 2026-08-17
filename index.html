@@ -1447,7 +1447,6 @@ function startRestTimer(restStr, exerciseTitle, nextSetInfo, accentColor) {
   if (nextEl) nextEl.textContent = nextSetInfo   || '—';
 
   // 프로그레스 원 초기화
-  const CIRCUMFERENCE = 389.6;
   const progEl = document.getElementById('timer-prog');
   if (progEl) {
     progEl.style.stroke = accentColor || '#6366f1';
@@ -1466,6 +1465,10 @@ function startRestTimer(restStr, exerciseTitle, nextSetInfo, accentColor) {
   // 실제 종료 시각 기준으로 계산 (백그라운드에서 setInterval이 느려져도 정확)
   const endTime = Date.now() + sec * 1000;
   let _fivesecFired = false;
+  let _lastNotifiedSec = -1; // 알림바 중복 업데이트 방지용
+
+  // 카운트다운 시작 시 알림바에 상시 표시
+  updatePersistentNotification(exerciseTitle, sec, sec, nextSetInfo);
 
   // 카운트다운 시작
   clearInterval(_timerInterval);
@@ -1474,25 +1477,62 @@ function startRestTimer(restStr, exerciseTitle, nextSetInfo, accentColor) {
     _timerRemaining = Math.max(0, Math.ceil(remainMs / 1000));
     updateTimerDisplay(_timerRemaining, sec);
 
-    // 5초 남으면 진동 + 알림 (1회만)
+    // 알림바 텍스트를 매초 갱신 (같은 tag로 덮어쓰기 → 알림 1개 유지)
+    if (_timerRemaining !== _lastNotifiedSec) {
+      _lastNotifiedSec = _timerRemaining;
+      updatePersistentNotification(exerciseTitle, _timerRemaining, sec, nextSetInfo);
+    }
+
+    // 5초 남으면 진동 (1회만)
     if (_timerRemaining <= 5 && !_fivesecFired) {
       _fivesecFired = true;
       if (navigator.vibrate) navigator.vibrate(100);
-      if (document.visibilityState === 'hidden') {
-        fireRestNotification('⏱ 곧 휴식 종료', `${exerciseTitle || '운동'} — 5초 남았습니다`);
-      }
     }
 
     if (_timerRemaining <= 0) {
       clearInterval(_timerInterval);
       if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-      if (document.visibilityState === 'hidden') {
-        fireRestNotification('✅ 휴식 끝!', `${exerciseTitle || '운동'} — ${nextSetInfo || '다음 세트 시작하세요'}`);
-      }
+      fireRestNotification('✅ 휴식 끝!', `${exerciseTitle || '운동'} — ${nextSetInfo || '다음 세트 시작하세요'}`);
       releaseWakeLock();
       setTimeout(closeTimer, 300);
     }
-  }, 250); // 더 촘촘하게 체크해 백그라운드 지연 보정
+  }, 1000); // 알림바 초당 갱신에 맞춰 1초 간격
+}
+
+// 카운트다운 내내 상단 알림바에 남은 시간을 표시 (같은 tag로 매초 갱신)
+function updatePersistentNotification(exerciseTitle, remaining, total, nextSetInfo) {
+  try {
+    if (Notification.permission !== 'granted') return;
+    const iconData = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI0IiBmaWxsPSIjMDgwODEwIi8+PHRleHQgeD0iNjQiIHk9Ijg1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjcyIj7wn4+3PC90ZXh0Pjwvc3ZnPg==';
+    const title = `⏱ 휴식 ${remaining}초 남음`;
+    const body  = `${exerciseTitle || '운동'} — 다음: ${nextSetInfo || ''}`;
+
+    if (_swRegistration && _swRegistration.active) {
+      _swRegistration.active.postMessage({
+        type: 'SHOW_NOTIFICATION',
+        title, body, icon: iconData,
+        vibrate: [],           // 매초 진동하면 거슬리므로 진동은 별도 처리
+        tag: 'gym-rest-timer', // 같은 tag → 알림 1개로 계속 교체됨
+        silent: true,          // 매초 소리/진동 없이 조용히 갱신
+      });
+    } else if (_swRegistration) {
+      _swRegistration.showNotification(title, {
+        body, icon: iconData, badge: iconData,
+        tag: 'gym-rest-timer', renotify: false, silent: true,
+      });
+    }
+  } catch(_) {}
+}
+
+// 타이머 종료/취소 시 알림바 정리
+function clearPersistentNotification() {
+  try {
+    if (_swRegistration && _swRegistration.getNotifications) {
+      _swRegistration.getNotifications({tag:'gym-rest-timer'}).then(list => {
+        list.forEach(n => n.close());
+      });
+    }
+  } catch(_) {}
 }
 
 function updateTimerDisplay(remaining, total) {
@@ -1516,6 +1556,7 @@ function updateTimerDisplay(remaining, total) {
 function closeTimer() {
   clearInterval(_timerInterval);
   releaseWakeLock();
+  clearPersistentNotification();
   document.getElementById('timer-overlay').classList.add('hidden');
 }
 
