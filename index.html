@@ -142,6 +142,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .timer-next-text{font-size:24px;color:#e2e8f0;font-weight:800}
 .timer-skip-btn{width:100%;padding:12px;border-radius:10px;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);color:#a5b4fc;font-size:13px;font-weight:800;cursor:pointer}
 /* 수정 모드 배너 */
+.debug-panel{position:fixed;top:0;left:0;right:0;max-height:40vh;overflow-y:auto;background:rgba(0,0,0,0.95);color:#4ade80;font-family:monospace;font-size:10px;padding:8px;z-index:99999;white-space:pre-wrap;word-break:break-all;border-bottom:2px solid #22c55e}
+.debug-panel.error{color:#f87171}
+.debug-close{position:fixed;top:2px;right:2px;background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:10px;z-index:100000}
 .fab-github{background:linear-gradient(135deg,#1f2937,#374151);box-shadow:0 4px 16px rgba(0,0,0,0.5);width:40px;height:40px;font-size:15px}
 /* GitHub 설정 모달 */
 .gh-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px}
@@ -246,6 +249,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
   </div>
 </div>
 
+<div id="debug-panel" class="debug-panel hidden"></div>
+<button id="debug-close" class="debug-close hidden">닫기</button>
 <script id="gym-data" type="application/json">{}</script>
 <div id="modal-overlay" class="modal-overlay hidden" onclick="modalCancel()">
   <div class="modal-box" onclick="event.stopPropagation()">
@@ -474,6 +479,8 @@ function saveToFile() {
   </div>
 </div>
 
+<div id="debug-panel" class="debug-panel hidden"></div>
+<button id="debug-close" class="debug-close hidden">닫기</button>
 <script id="gym-data" type="application/json">${JSON.stringify(data)}<\/script>`);
     const blob = new Blob([html], {type: 'text/html;charset=utf-8'});
     const a = document.createElement('a');
@@ -1369,24 +1376,28 @@ let _notifyPermission = 'default';
 // ── Service Worker 등록 (백그라운드 알림용) ───────────────
 let _swRegistration = null;
 async function registerServiceWorker() {
-  try {
-    if (!('serviceWorker' in navigator)) return;
-    _swRegistration = await navigator.serviceWorker.register('./sw.js');
-  } catch(e) { /* sw.js 없거나 등록 실패 - 조용히 무시 */ }
+  if (!('serviceWorker' in navigator)) throw new Error('serviceWorker 미지원');
+  _swRegistration = await navigator.serviceWorker.register('./sw.js');
+  return _swRegistration;
 }
 
 function ensureNotifyPermission() {
   try {
-    if (!('Notification' in window)) return;
+    if (!('Notification' in window)) { dlog('Notification API 없음', true); return; }
     _notifyPermission = Notification.permission;
+    dlog('알림 권한 확인: ' + _notifyPermission);
     if (_notifyPermission === 'default') {
-      Notification.requestPermission().then(p => { _notifyPermission = p; });
+      Notification.requestPermission().then(p => {
+        _notifyPermission = p;
+        dlog('알림 권한 응답: ' + p);
+      });
     }
-  } catch(_) {}
+  } catch(e) { dlog('권한 확인 오류: ' + e.message, true); }
 }
 function fireRestNotification(title, body) {
   try {
-    if (Notification.permission !== 'granted') return;
+    dlog('알림 시도: 권한=' + Notification.permission + ', SW=' + (!!_swRegistration));
+    if (Notification.permission !== 'granted') { dlog('알림 권한 없음', true); return; }
     const iconData = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI0IiBmaWxsPSIjMDgwODEwIi8+PHRleHQgeD0iNjQiIHk9Ijg1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjcyIj7wn4+3PC90ZXh0Pjwvc3ZnPg==';
 
     // 1순위: Service Worker를 통한 알림 (모바일 크롬 백그라운드 지원)
@@ -1951,10 +1962,46 @@ document.addEventListener('change', function(e) {
   e.target.value = ''; // 같은 파일 재선택 가능하도록 초기화
 });
 
+// ── 디버그 패널 (임시 진단용) ────────────────────────────
+const _debugLog = [];
+function dlog(msg, isError) {
+  _debugLog.push((isError?'❌ ':'✓ ') + msg);
+  const panel = document.getElementById('debug-panel');
+  const closeBtn = document.getElementById('debug-close');
+  if (panel) {
+    panel.textContent = _debugLog.join('\n');
+    panel.classList.remove('hidden');
+    if (isError) panel.classList.add('error');
+  }
+  if (closeBtn) closeBtn.classList.remove('hidden');
+}
+document.addEventListener('click', (e) => {
+  if (e.target.id === 'debug-close') {
+    document.getElementById('debug-panel').classList.add('hidden');
+    e.target.classList.add('hidden');
+  }
+});
+window.addEventListener('error', (e) => {
+  dlog('전역 에러: ' + e.message + ' (' + e.filename + ':' + e.lineno + ')', true);
+});
+
+dlog('앱 시작. UA=' + navigator.userAgent.slice(0,50));
+dlog('Notification API: ' + ('Notification' in window));
+if ('Notification' in window) dlog('알림 권한: ' + Notification.permission);
+dlog('serviceWorker 지원: ' + ('serviceWorker' in navigator));
+dlog('현재 URL: ' + location.href);
+dlog('프로토콜: ' + location.protocol);
+
 // ── 14. 초기 실행 ─────────────────────────────────────────
 loadFromStorage();
 renderDay();
-registerServiceWorker();
+
+registerServiceWorker().then(() => {
+  dlog('SW 등록 성공: ' + (_swRegistration ? _swRegistration.scope : 'null'));
+}).catch(e => {
+  dlog('SW 등록 실패: ' + e.message, true);
+});
+
 // GitHub 설정이 있으면 백그라운드에서 최신 기록 자동 동기화
 setTimeout(() => { githubAutoSync(true).catch(()=>{}); }, 500);
 </script>
