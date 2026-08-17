@@ -20,10 +20,11 @@ self.addEventListener('message', (event) => {
     body: data.body || '',
     icon: data.icon,
     badge: data.icon,
-    silent: false,
-    vibrate: data.vibrate || [200, 100, 200],
-    tag: data.tag || 'gym-rest-timer',
-    renotify: true,
+    silent: !!data.silent,                     // 매초 갱신 시 조용히 (진동/소리 없음)
+    vibrate: (data.vibrate && data.vibrate.length) ? data.vibrate : undefined,
+    tag: data.tag || 'gym-rest-timer',          // 같은 tag = 알림 1개로 계속 교체
+    renotify: data.renotify !== undefined ? data.renotify : false,
+    requireInteraction: false,
   };
 
   event.waitUntil(self.registration.showNotification(title, options));
