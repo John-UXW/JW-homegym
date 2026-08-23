@@ -12,10 +12,13 @@
 <meta name="apple-mobile-web-app-title" content="홈짐">
 <meta name="application-name" content="홈짐">
 <meta name="theme-color" content="#080810">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
 
 <!-- 홈 화면 아이콘 (SVG 인라인 → base64) -->
-<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI0IiBmaWxsPSIjMDgwODEwIi8+PHRleHQgeD0iNjQiIHk9Ijg1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjcyIj7wn4+3PC90ZXh0Pjwvc3ZnPg==">
-<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI0IiBmaWxsPSIjMDgwODEwIi8+PHRleHQgeD0iNjQiIHk9Ijg1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjcyIj7wn4+3PC90ZXh0Pjwvc3ZnPg==">
+
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{background:#080810;color:#e2e8f0;font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;min-height:100vh;padding-bottom:calc(60px + env(safe-area-inset-bottom));padding-top:env(safe-area-inset-top)}
@@ -124,6 +127,15 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .modal-ok{flex:1;padding:10px;border-radius:9px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#f87171;font-size:13px;font-weight:700;cursor:pointer}
 .modal-ok.blue{background:rgba(99,102,241,0.15);border-color:rgba(99,102,241,0.3);color:#a5b4fc}
 .cut-marker{display:flex;align-items:center;gap:8px;margin:4px 0 10px;padding:0 2px}
+/* 추천 운동 카드 (체크와 무관, 참고용) */
+.reco-card{background:rgba(167,139,250,0.05);border:1px dashed rgba(167,139,250,0.3);border-radius:12px;margin:14px 0;overflow:hidden}
+.reco-hdr{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px dashed rgba(167,139,250,0.2)}
+.reco-badge{font-size:9px;font-weight:800;color:#a78bfa;background:rgba(167,139,250,0.15);border:1px solid rgba(167,139,250,0.3);border-radius:5px;padding:2px 7px;letter-spacing:0.02em}
+.reco-title{font-weight:800;font-size:13px;color:#e2e8f0}
+.reco-body{padding:6px 14px 12px}
+.reco-desc{font-size:11px;color:#94a3b8;margin-bottom:8px;line-height:1.5}
+.reco-set-row{display:flex;gap:8px;align-items:center;font-size:11px;color:#64748b;padding:3px 0}
+.reco-set-num{font-weight:800;color:#a78bfa;width:22px;flex-shrink:0}
 /* 휴식 타이머 팝업 */
 .timer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:8000;display:flex;align-items:center;justify-content:center;padding:20px}
 .timer-box{background:#0f172a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:28px 24px;width:100%;max-width:320px;text-align:center}
@@ -939,22 +951,27 @@ const ROUTINE = {
       {id:'A',title:'펙덱 플라이',tag:'① 가슴 활성화 — 고립 워밍업',muscle:'대흉근',equip:'머신',
         sets:[{set:'1',reps:'15회',rpe:7,note:'넓게 열어 스트레치'},{set:'2',reps:'12회',rpe:8,note:'수축 끝 1초'},{set:'3',reps:'12회',rpe:8,note:'천천히 이완 3초'},{set:'4',reps:'10회',rpe:9,note:'가슴 완전 소진'}],
         tip:'가슴 펌핑 극대화. 팔꿈치 살짝 구부린 채 고정.',rest:'60초'},
-      {id:'B',title:'체스트 프레스 머신',tag:'② 주동 복합 — 가슴 최대 동원',muscle:'대흉근',equip:'머신',cutTag:'여기까지 4개',
+      {id:'B',title:'펙덱 리버스 플라이 (후면 삼각근)',tag:'② 후면 삼각근 — 펙덱 플라이 직후',muscle:'후면 삼각근',equip:'머신',cutTag:'여기까지 4개',
+        sets:[{set:'1',reps:'15회',rpe:7,note:'펙덱 머신 반대 방향, 손잡이 밀어 벌리기'},{set:'2',reps:'12회',rpe:8,note:'날개뼈 모으며 1초 정지'},{set:'3',reps:'12회',rpe:8,note:'천천히 이완'},{set:'4',reps:'10회',rpe:9,note:'후면 삼각근 완전 소진'}],
+        tip:'펙덱 플라이 반대 동작. 같은 머신에서 방향만 바꿔 바로 이어서.',rest:'60초'},
+      {id:'C',title:'체스트 프레스 머신',tag:'③ 주동 복합 — 가슴 최대 동원',muscle:'대흉근',equip:'머신',cutTag:'여기까지 5개',
         sets:[{set:'WU',reps:'15회',rpe:6,note:'자세 세팅'},{set:'1',reps:'12회',rpe:7,note:'패턴 익히기'},{set:'2',reps:'10회',rpe:8,note:'무게 증가'},{set:'3',reps:'8회',rpe:9,note:'고중량 집중'},{set:'4',reps:'6회',rpe:9,note:'가슴 최대 자극'}],
         tip:'가슴 집중일: 최대 중량 도전. 내릴 때 3초 버티기.',rest:'90초'},
-      {id:'C',title:'케이블 크로스오버',tag:'③ 고립 — 대흉근 하부·중앙 (케이블①)',muscle:'대흉근',equip:'케이블',
+      {id:'D',title:'케이블 크로스오버',tag:'④ 고립 — 대흉근 하부·중앙 (케이블①)',muscle:'대흉근',equip:'케이블',
         sets:[{set:'1',reps:'15회',rpe:7,note:'풀리 높게 → 아래로 모으기'},{set:'2',reps:'12회',rpe:8,note:'교차 시 수축 1초'},{set:'3',reps:'12회',rpe:8,note:'가슴 중앙 집중'},{set:'4',reps:'10회',rpe:9,note:'드롭셋 가능'}],
         tip:'가슴 집중일 고립. 교차 후 1~2초 쥐어짜기.',rest:'60초'},
-      {id:'D',title:'하이 풀리 (랫 풀다운)',tag:'④ 광배근 — 가슴 후 균형 (케이블②)',muscle:'광배근',equip:'케이블',cutTag:'여기까지 5개',
+      {id:'E',title:'하이 풀리 (랫 풀다운)',tag:'⑤ 광배근 — 가슴 후 균형 (케이블②)',muscle:'광배근',equip:'케이블',cutTag:'여기까지 6개',
         sets:[{set:'1',reps:'12회',rpe:7,note:'넓은 그립, 가슴으로 당기기'},{set:'2',reps:'10회',rpe:8,note:'수축 시 팔꿈치 옆구리'},{set:'3',reps:'8회',rpe:8,note:'올라갈 때 충분히 늘이기'},{set:'4',reps:'6회',rpe:9,note:'광배근 고중량'}],
         tip:'가슴 집중 후 등으로 밸런스. 케이블 스테이션 연속 사용.',rest:'90초'},
-      {id:'E',title:'아령 — 인클라인 덤벨 프레스',tag:'⑤ 상부 흉근 — 각도 변화',muscle:'대흉근',equip:'아령',cutTag:'여기까지 6개',
+      {id:'F',title:'아령 — 인클라인 덤벨 프레스',tag:'⑥ 상부 흉근 — 각도 변화',muscle:'대흉근',equip:'아령',cutTag:'여기까지 6개 (풀)',
         sets:[{set:'1',reps:'12회',rpe:7,note:'45도, 상부 가슴 자극'},{set:'2',reps:'10회',rpe:8,note:'팔꿈치 바깥 45도'},{set:'3',reps:'8회',rpe:8,note:'정점에서 모아주기'},{set:'4',reps:'6회',rpe:9,note:'상부 흉근 고중량'}],
         tip:'상부 흉근 특화. A형보다 1세트 더 집중.',rest:'75초'},
-      {id:'F',title:'아령 — 리버스 플라이 (후면 삼각근)',tag:'⑥ 마무리 — 후면 삼각근·상부 등',muscle:'후면 삼각근',equip:'아령',cutTag:'여기까지 6개 (풀)',
-        sets:[{set:'1',reps:'15회',rpe:7,note:'상체 숙이고 아령 양옆으로 들기'},{set:'2',reps:'12회',rpe:8,note:'날개뼈 모으며 1초 정지'},{set:'3',reps:'12회',rpe:8,note:'가벼운 무게로 정확한 자세'},{set:'4',reps:'10회',rpe:9,note:'후면 삼각근 완전 소진'}],
-        tip:'가슴 운동 후 전면 밸런스 보정. 반동 없이 가벼운 무게로.',rest:'60초'},
     ],
+    recommendedExercise: {
+      title:'아령 — 리버스 플라이 (후면 삼각근)', muscle:'후면 삼각근', equip:'아령',
+      desc:'루틴 세트에는 포함되지 않은 추가 추천 운동입니다. 여유 있으면 마무리로 진행해보세요.',
+      sets:[{set:'1',reps:'15회',note:'상체 숙이고 아령 양옆으로 들기'},{set:'2',reps:'12회',note:'날개뼈 모으며 1초 정지'},{set:'3',reps:'12회',note:'가벼운 무게로 정확한 자세'}],
+    },
     cooldown:'가슴 스트레칭 3분 + 어깨 스트레칭 2분 + 광배근 1분',
   },
 
@@ -970,22 +987,27 @@ const ROUTINE = {
       {id:'A',title:'펙덱 플라이',tag:'① 가슴 유지 워밍업',muscle:'대흉근',equip:'머신',
         sets:[{set:'1',reps:'15회',rpe:7,note:'가슴 활성화'},{set:'2',reps:'12회',rpe:8,note:'수축 끝 1초'},{set:'3',reps:'12회',rpe:8,note:'천천히 이완'},{set:'4',reps:'10회',rpe:9,note:'유지 자극 마무리'}],
         tip:'등·어깨 날이지만 가슴 퇴화 방지 4세트.',rest:'60초'},
-      {id:'B',title:'하이 풀리 (랫 풀다운)',tag:'② 주동 복합 — 광배근 폭',muscle:'광배근',equip:'케이블',cutTag:'여기까지 4개',
+      {id:'B',title:'펙덱 리버스 플라이 (후면 삼각근)',tag:'② 후면 삼각근 — 펙덱 플라이 직후',muscle:'후면 삼각근',equip:'머신',
+        sets:[{set:'1',reps:'15회',rpe:7,note:'펙덱 머신 반대 방향, 손잡이 밀어 벌리기'},{set:'2',reps:'12회',rpe:8,note:'날개뼈 모으며 1초 정지'},{set:'3',reps:'12회',rpe:8,note:'천천히 이완'},{set:'4',reps:'10회',rpe:9,note:'후면 삼각근 완전 소진'}],
+        tip:'펙덱 플라이 반대 동작. 같은 머신에서 방향만 바꿔 바로 이어서.',rest:'60초'},
+      {id:'C',title:'하이 풀리 (랫 풀다운)',tag:'③ 주동 복합 — 광배근 폭',muscle:'광배근',equip:'케이블',cutTag:'여기까지 4개',
         sets:[{set:'WU',reps:'12회',rpe:6,note:'등 활성화'},{set:'1',reps:'12회',rpe:7,note:'오버그립, 가슴으로 당기기'},{set:'2',reps:'10회',rpe:8,note:'수축 시 팔꿈치 옆구리'},{set:'3',reps:'8회',rpe:9,note:'광배근 완전 수축'},{set:'4',reps:'6회',rpe:9,note:'고중량 마무리'}],
         tip:'오버그립 광배근 폭. 복합 점진 중량.',rest:'90초'},
-      {id:'C',title:'아령 — 원암 벤트오버 로우',tag:'③ 보조 복합 — 등 두께',muscle:'등 중앙',equip:'아령',
+      {id:'D',title:'아령 — 원암 벤트오버 로우',tag:'④ 보조 복합 — 등 두께',muscle:'등 중앙',equip:'아령',
         sets:[{set:'1',reps:'각 10회',rpe:7,note:'한쪽 손·무릎 벤치 지지'},{set:'2',reps:'각 8회',rpe:8,note:'팔꿈치 옆구리로'},{set:'3',reps:'각 8회',rpe:9,note:'수축 끝 1초'},{set:'4',reps:'각 6회',rpe:9,note:'등 두께 고중량'}],
         tip:'등 두께 집중. 원암 점진 중량.',rest:'75초'},
-      {id:'D',title:'숄더 프레스 머신',tag:'④ 주동 복합 — 전면·중간 삼각근',muscle:'삼각근',equip:'머신',cutTag:'여기까지 5개',
+      {id:'E',title:'숄더 프레스 머신',tag:'⑤ 주동 복합 — 전면·중간 삼각근',muscle:'삼각근',equip:'머신',cutTag:'여기까지 6개 (풀)',
         sets:[{set:'WU',reps:'12회',rpe:6,note:'어깨 관절 예열'},{set:'1',reps:'12회',rpe:7,note:'팔꿈치 90도에서 밀기'},{set:'2',reps:'10회',rpe:8,note:'완전 신전 1초'},{set:'3',reps:'8회',rpe:8,note:'으쓱 금지'},{set:'4',reps:'6회',rpe:9,note:'어깨 고중량 마무리'}],
         tip:'어깨 복합도 점진 중량. 등 운동 후라 어깨 피로 주의.',rest:'90초'},
-      {id:'E',title:'아령 — 사이드 레터럴 레이즈',tag:'⑤ 고립 — 측면 삼각근',muscle:'측면 삼각근',equip:'아령',
+      {id:'F',title:'아령 — 사이드 레터럴 레이즈',tag:'⑥ 고립 — 측면 삼각근',muscle:'측면 삼각근',equip:'아령',
         sets:[{set:'1',reps:'15회',rpe:7,note:'새끼손가락 살짝 올려'},{set:'2',reps:'15회',rpe:8,note:'어깨 높이 1초 정지'},{set:'3',reps:'12회',rpe:8,note:'천천히 내리며 버티기'},{set:'4',reps:'12회',rpe:9,note:'측면 삼각근 완전 소진'}],
         tip:'어깨 고립은 고반복이 효과적. 승모근 개입 금지.',rest:'60초'},
-      {id:'F',title:'아령 — 벤트오버 리버스 플라이',tag:'⑥ 마무리 고립 — 후면 삼각근',muscle:'후면 삼각근',equip:'아령',cutTag:'여기까지 6개 (풀)',
-        sets:[{set:'1',reps:'15회',rpe:7,note:'상체 숙이고 아령 양옆으로 들기'},{set:'2',reps:'12회',rpe:8,note:'날개뼈 모으며 1초 정지'},{set:'3',reps:'12회',rpe:8,note:'팔꿈치 살짝 구부린 채 유지'},{set:'4',reps:'10회',rpe:9,note:'후면 삼각근 완전 소진'}],
-        tip:'어깨 3방향(전면·측면·후면) 완성. 가벼운 무게로 정확히.',rest:'60초'},
-    ],
+      ],
+    recommendedExercise: {
+      title:'아령 — 벤트오버 리버스 플라이', muscle:'후면 삼각근', equip:'아령',
+      desc:'루틴 세트에는 포함되지 않은 추가 추천 운동입니다. 어깨 3방향 균형을 위해 여유 있으면 진행해보세요.',
+      sets:[{set:'1',reps:'15회',note:'상체 숙이고 아령 양옆으로 들기'},{set:'2',reps:'12회',note:'날개뼈 모으며 1초 정지'},{set:'3',reps:'12회',note:'팔꿈치 살짝 구부린 채 유지'}],
+    },
     cooldown:'광배근·등 스트레칭 2분 + 어깨 스트레칭 2분 + 심호흡 1분',
   },
 
@@ -1000,21 +1022,24 @@ const ROUTINE = {
       {id:'A',title:'펙덱 플라이',tag:'① 가슴 유지 워밍업',muscle:'대흉근',equip:'머신',
         sets:[{set:'1',reps:'15회',rpe:7,note:'가슴 활성화'},{set:'2',reps:'12회',rpe:8,note:'수축 끝 1초'},{set:'3',reps:'12회',rpe:8,note:'천천히 이완'},{set:'4',reps:'10회',rpe:9,note:'유지 자극'}],
         tip:'팔 날이지만 가슴 유지 자극 4세트.',rest:'60초'},
-      {id:'B',title:'하이 풀리 (언더그립)',tag:'② 광배근·이두 복합 예열 (케이블①)',muscle:'광배근',equip:'케이블',
+      {id:'B',title:'펙덱 리버스 플라이 (후면 삼각근)',tag:'② 후면 삼각근 — 펙덱 플라이 직후',muscle:'후면 삼각근',equip:'머신',
+        sets:[{set:'1',reps:'15회',rpe:7,note:'펙덱 머신 반대 방향, 손잡이 밀어 벌리기'},{set:'2',reps:'12회',rpe:8,note:'날개뼈 모으며 1초 정지'},{set:'3',reps:'12회',rpe:8,note:'천천히 이완'},{set:'4',reps:'10회',rpe:9,note:'후면 삼각근 완전 소진'}],
+        tip:'펙덱 플라이 반대 동작. 같은 머신에서 방향만 바꿔 바로 이어서.',rest:'60초'},
+      {id:'C',title:'하이 풀리 (언더그립)',tag:'③ 광배근·이두 복합 예열 (케이블①)',muscle:'광배근',equip:'케이블',
         sets:[{set:'1',reps:'12회',rpe:7,note:'언더그립, 이두 예열'},{set:'2',reps:'10회',rpe:8,note:'가슴까지 당기기'},{set:'3',reps:'8회',rpe:8,note:'이두 협력 자극'},{set:'4',reps:'6회',rpe:9,note:'고중량 광배근'}],
         tip:'팔 날 광배근+이두 복합. 점진 중량.',rest:'75초'},
-      {id:'C',title:'케이블 트라이셉스 푸시다운',tag:'③ 주동 — 삼두근 전체 (케이블②)',muscle:'삼두근',equip:'케이블',cutTag:'여기까지 4개',
+      {id:'D',title:'케이블 트라이셉스 푸시다운',tag:'④ 주동 — 삼두근 전체 (케이블②)',muscle:'삼두근',equip:'케이블',cutTag:'여기까지 4개',
         sets:[{set:'1',reps:'15회',rpe:7,note:'팔꿈치 고정 워밍업'},{set:'2',reps:'12회',rpe:8,note:'완전 신전 1초'},{set:'3',reps:'10회',rpe:8,note:'로프 끝에서 벌리기'},{set:'4',reps:'8회',rpe:9,note:'삼두 고중량 소진'}],
         tip:'팔 부피의 2/3 삼두. 고반복→고중량 점진.',rest:'75초'},
-      {id:'D',title:'케이블 바이셉스 컬',tag:'④ 주동 — 이두근 기본 그립 (케이블③)',muscle:'이두근',equip:'케이블',cutTag:'여기까지 5개',
+      {id:'E',title:'케이블 바이셉스 컬',tag:'⑤ 주동 — 이두근 기본 그립 (케이블③)',muscle:'이두근',equip:'케이블',cutTag:'여기까지 5개',
         sets:[{set:'1',reps:'15회',rpe:7,note:'낮은 풀리, 워밍업'},{set:'2',reps:'12회',rpe:8,note:'최상단 1초'},{set:'3',reps:'10회',rpe:8,note:'내릴 때 3초 이완'},{set:'4',reps:'8회',rpe:9,note:'이두 고중량 소진'}],
         tip:'고반복→고중량. 케이블 스테이션 마지막 운동.',rest:'75초'},
-      {id:'E',title:'아령 — 원암 덤벨 킥백',tag:'⑤ 고립 — 삼두근 장두',muscle:'삼두근',equip:'아령',cutTag:'여기까지 6개',
+      {id:'F',title:'아령 — 원암 덤벨 킥백',tag:'⑥ 고립 — 삼두근 장두',muscle:'삼두근',equip:'아령',cutTag:'여기까지 6개',
         sets:[{set:'1',reps:'한쪽 12회',rpe:7,note:'위팔 수평 고정'},{set:'2',reps:'한쪽 10회',rpe:8,note:'완전 신전 1초'},{set:'3',reps:'한쪽 8회',rpe:8,note:'천천히 굽히며 이완'},{set:'4',reps:'한쪽 8회',rpe:9,note:'삼두 장두 소진'}],
         tip:'원암 삼두 고립. 팔꿈치 절대 내려가지 않게.',rest:'60초'},
-      {id:'F',title:'아령 — 해머 컬',tag:'⑥ 고립 — 이두근·전완 중립 그립',muscle:'이두근',equip:'아령',cutTag:'여기까지 6개 (풀)',
+      {id:'G',title:'아령 — 해머 컬',tag:'⑦ 고립 — 이두근·전완 중립 그립',muscle:'이두근',equip:'아령',cutTag:'여기까지 7개 (풀)',
         sets:[{set:'1',reps:'12회',rpe:7,note:'중립 그립, 워밍업'},{set:'2',reps:'12회',rpe:8,note:'좌우 교대'},{set:'3',reps:'10회',rpe:8,note:'전완 굵기에도 효과'},{set:'4',reps:'10회',rpe:9,note:'이두 전완 소진'}],
-        tip:'기본 그립(D)과 중립 그립(F) 두 각도로 이두 전체 자극.',rest:'60초'},
+        tip:'기본 그립(E)과 중립 그립(G) 두 각도로 이두 전체 자극.',rest:'60초'},
     ],
     cooldown:'팔 스트레칭 2분 + 등·어깨 스트레칭 2분 + 심호흡 1분',
   },
@@ -1172,6 +1197,26 @@ function buildRunningBlock(b, bi) {
 function toggleRunDone(bi) { runDone[activeDay] = !runDone[activeDay]; saveToStorage(); renderDay(); }
 
 // ── 11. 운동 블록 빌드 ────────────────────────────────────
+function buildRecommendedCard(reco, accent) {
+  const wrap = document.createElement('div');
+  wrap.className = 'reco-card';
+
+  const setsHTML = (reco.sets || []).map(s =>
+    `<div class="reco-set-row"><span class="reco-set-num">${s.set}</span><span>${s.reps}</span><span style="color:#475569">— ${s.note}</span></div>`
+  ).join('');
+
+  wrap.innerHTML = `
+    <div class="reco-hdr">
+      <span class="reco-badge">💡 추가 추천</span>
+      <span class="reco-title">${reco.title}</span>
+    </div>
+    <div class="reco-body">
+      <div class="reco-desc">${reco.desc || ''}</div>
+      ${setsHTML}
+    </div>`;
+  return wrap;
+}
+
 function buildExBlock(b, bi, accent) {
   const isCable    = b.equip === '케이블';
   const isDumbbell = b.equip === '아령';
@@ -1334,6 +1379,11 @@ function renderDay() {
       blocksEl.appendChild(el);
     }
   });
+
+  // 추가 추천 운동 카드 (진행률과 무관, 체크박스 없음)
+  if (day.recommendedExercise) {
+    blocksEl.appendChild(buildRecommendedCard(day.recommendedExercise, day.accent));
+  }
 
   document.getElementById('cooldown-text').textContent = day.cooldown;
   document.getElementById('total-time').textContent = '⏱ ' + day.totalTime;
