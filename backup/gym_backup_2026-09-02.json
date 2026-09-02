@@ -1,0 +1,2355 @@
+{
+  "checks": {
+    "dayA": {},
+    "dayB": {},
+    "dayGa": {},
+    "dayNa": {
+      "0-0": true,
+      "0-1": true,
+      "0-2": true,
+      "0-3": true,
+      "1-0": true,
+      "1-1": true,
+      "1-2": true,
+      "1-3": true,
+      "2-0": true,
+      "2-1": true,
+      "2-2": true,
+      "2-3": true,
+      "2-4": true,
+      "3-0": true,
+      "3-1": true,
+      "3-2": true,
+      "3-3": true,
+      "4-0": true,
+      "4-1": true,
+      "4-2": true,
+      "4-3": true,
+      "4-4": true,
+      "5-0": true,
+      "5-1": true,
+      "5-2": true,
+      "5-3": true
+    },
+    "dayDa": {}
+  },
+  "runDone": {
+    "dayA": false,
+    "dayB": false,
+    "dayGa": false,
+    "dayNa": true,
+    "dayDa": false
+  },
+  "weightInputs": {
+    "펙덱 플라이": {
+      "kg": 45,
+      "bothSide": false
+    },
+    "하이 풀리 (언더그립)": {
+      "kg": 45,
+      "bothSide": false
+    },
+    "케이블 우드찹": {
+      "kg": 40,
+      "bothSide": false
+    },
+    "아령 — 원암 덤벨 킥백": {
+      "kg": 6,
+      "bothSide": false
+    },
+    "케이블 바이셉스 컬": {
+      "kg": 25,
+      "bothSide": false
+    },
+    "케이블 트라이셉스 푸시다운": {
+      "kg": 40,
+      "bothSide": false
+    },
+    "아령 — 해머 컬": {
+      "kg": 8,
+      "bothSide": true
+    },
+    "체스트 프레스 머신": {
+      "kg": 50,
+      "bothSide": false
+    },
+    "아령 — 인클라인 덤벨 프레스": {
+      "kg": 14,
+      "bothSide": true
+    },
+    "숄더 프레스 머신": {
+      "kg": 25,
+      "bothSide": false
+    },
+    "하이 풀리 (랫 풀다운)": {
+      "kg": 50,
+      "bothSide": false
+    },
+    "케이블 크로스오버": {
+      "kg": 20,
+      "bothSide": true
+    },
+    "아령 — 원암 벤트오버 로우": {
+      "kg": 16,
+      "bothSide": false
+    },
+    "아령 — 사이드 레터럴 레이즈": {
+      "kg": 8,
+      "bothSide": true
+    },
+    "아령 — 리버스 플라이 (후면 삼각근)": {
+      "kg": 8,
+      "bothSide": true
+    },
+    "아령 — 벤트오버 리버스 플라이": {
+      "kg": 6,
+      "bothSide": true
+    },
+    "펙덱 리버스 플라이 (후면 삼각근)": {
+      "kg": 30,
+      "bothSide": false
+    }
+  },
+  "activeDay": "cal",
+  "saveDate": "2026-09-02",
+  "history": {
+    "2026-06-24": {
+      "dayKey": "dayA",
+      "checks": {
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "7-0": true,
+        "7-1": true,
+        "7-2": true,
+        "7-3": true
+      },
+      "runDone": true,
+      "weights": {}
+    },
+    "2026-06-26": {
+      "dayKey": "dayNa",
+      "checks": {
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "2-4": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "3-3": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "4-3": true,
+        "4-4": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "5-3": true,
+        "6-0": true,
+        "6-1": true,
+        "6-2": true
+      },
+      "runDone": true,
+      "weights": {}
+    },
+    "2026-06-28": {
+      "dayKey": "dayDa",
+      "checks": {
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "3-3": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "4-3": true,
+        "5-0": true,
+        "5-2": true,
+        "5-1": true,
+        "6-0": true,
+        "6-1": true,
+        "6-2": true,
+        "7-0": true,
+        "7-1": true,
+        "7-2": true
+      },
+      "runDone": true,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 30,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 8,
+          "bothSide": false
+        }
+      }
+    },
+    "2026-07-05": {
+      "dayKey": "dayA",
+      "checks": {
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "7-0": true,
+        "7-1": true,
+        "7-2": true,
+        "7-3": true
+      },
+      "runDone": true,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 30,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 8,
+          "bothSide": false
+        },
+        "체스트 프레스 머신": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 인클라인 덤벨 프레스": {
+          "kg": 12,
+          "bothSide": true
+        },
+        "숄더 프레스 머신": {
+          "kg": 10,
+          "bothSide": false
+        },
+        "하이 풀리 (랫 풀다운)": {
+          "kg": 30,
+          "bothSide": false
+        },
+        "케이블 크로스오버": {
+          "kg": 10,
+          "bothSide": true
+        }
+      }
+    },
+    "2026-07-08": {
+      "dayKey": "dayNa",
+      "checks": {
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "2-4": true,
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "3-3": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "5-3": true,
+        "6-0": true,
+        "6-1": true,
+        "6-2": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "4-3": true,
+        "4-4": true
+      },
+      "runDone": true,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 30,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 8,
+          "bothSide": false
+        },
+        "체스트 프레스 머신": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 인클라인 덤벨 프레스": {
+          "kg": 12,
+          "bothSide": true
+        },
+        "숄더 프레스 머신": {
+          "kg": 10,
+          "bothSide": false
+        },
+        "하이 풀리 (랫 풀다운)": {
+          "kg": 30,
+          "bothSide": false
+        },
+        "케이블 크로스오버": {
+          "kg": 10,
+          "bothSide": true
+        },
+        "아령 — 원암 벤트오버 로우": {
+          "kg": 10,
+          "bothSide": false
+        },
+        "아령 — 사이드 레터럴 레이즈": {
+          "kg": 6,
+          "bothSide": false
+        }
+      }
+    },
+    "2026-07-10": {
+      "dayKey": "dayDa",
+      "checks": {
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "6-0": true,
+        "6-1": true,
+        "6-2": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "3-3": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "4-3": true,
+        "7-0": true,
+        "7-1": true,
+        "7-2": true
+      },
+      "runDone": true,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 30,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 20,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 8,
+          "bothSide": false
+        },
+        "체스트 프레스 머신": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 인클라인 덤벨 프레스": {
+          "kg": 12,
+          "bothSide": true
+        },
+        "숄더 프레스 머신": {
+          "kg": 10,
+          "bothSide": false
+        },
+        "하이 풀리 (랫 풀다운)": {
+          "kg": 30,
+          "bothSide": false
+        },
+        "케이블 크로스오버": {
+          "kg": 10,
+          "bothSide": true
+        },
+        "아령 — 원암 벤트오버 로우": {
+          "kg": 10,
+          "bothSide": false
+        },
+        "아령 — 사이드 레터럴 레이즈": {
+          "kg": 6,
+          "bothSide": false
+        }
+      }
+    },
+    "2026-07-12": {
+      "dayKey": "dayGa",
+      "checks": {
+        "1-0": true,
+        "1-2": true,
+        "1-1": true,
+        "1-3": true,
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "2-4": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "3-3": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "4-3": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "7-0": true,
+        "7-1": true,
+        "7-2": true
+      },
+      "runDone": true,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 30,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 20,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 8,
+          "bothSide": false
+        },
+        "체스트 프레스 머신": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 인클라인 덤벨 프레스": {
+          "kg": 12,
+          "bothSide": true
+        },
+        "숄더 프레스 머신": {
+          "kg": 15,
+          "bothSide": false
+        },
+        "하이 풀리 (랫 풀다운)": {
+          "kg": 30,
+          "bothSide": false
+        },
+        "케이블 크로스오버": {
+          "kg": 10,
+          "bothSide": true
+        },
+        "아령 — 원암 벤트오버 로우": {
+          "kg": 10,
+          "bothSide": false
+        },
+        "아령 — 사이드 레터럴 레이즈": {
+          "kg": 6,
+          "bothSide": false
+        }
+      }
+    },
+    "2026-07-15": {
+      "dayKey": "dayNa",
+      "checks": {
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "2-4": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "3-3": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "5-3": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "6-0": true,
+        "6-1": true,
+        "6-2": true,
+        "4-3": true,
+        "4-4": true
+      },
+      "runDone": true,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 30,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 20,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 8,
+          "bothSide": false
+        },
+        "체스트 프레스 머신": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 인클라인 덤벨 프레스": {
+          "kg": 12,
+          "bothSide": true
+        },
+        "숄더 프레스 머신": {
+          "kg": 15,
+          "bothSide": false
+        },
+        "하이 풀리 (랫 풀다운)": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "케이블 크로스오버": {
+          "kg": 10,
+          "bothSide": true
+        },
+        "아령 — 원암 벤트오버 로우": {
+          "kg": 12,
+          "bothSide": false
+        },
+        "아령 — 사이드 레터럴 레이즈": {
+          "kg": 6,
+          "bothSide": false
+        }
+      }
+    },
+    "2026-07-17": {
+      "dayKey": "dayDa",
+      "checks": {
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "6-0": true,
+        "6-1": true,
+        "6-2": true,
+        "7-1": true,
+        "3-0": true,
+        "3-2": true,
+        "3-1": true,
+        "3-3": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "4-3": true,
+        "7-0": true,
+        "7-2": true
+      },
+      "runDone": true,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 20,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 8,
+          "bothSide": false
+        },
+        "체스트 프레스 머신": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 인클라인 덤벨 프레스": {
+          "kg": 12,
+          "bothSide": true
+        },
+        "숄더 프레스 머신": {
+          "kg": 15,
+          "bothSide": false
+        },
+        "하이 풀리 (랫 풀다운)": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "케이블 크로스오버": {
+          "kg": 10,
+          "bothSide": true
+        },
+        "아령 — 원암 벤트오버 로우": {
+          "kg": 12,
+          "bothSide": false
+        },
+        "아령 — 사이드 레터럴 레이즈": {
+          "kg": 6,
+          "bothSide": false
+        }
+      }
+    },
+    "2026-07-19": {
+      "dayKey": "dayGa",
+      "checks": {
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "1-3": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "3-3": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "4-3": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "2-4": true,
+        "7-0": true,
+        "7-1": true,
+        "7-2": true,
+        "5-3": true,
+        "7-3": true,
+        "7-4": true
+      },
+      "runDone": true,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 20,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 8,
+          "bothSide": false
+        },
+        "체스트 프레스 머신": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 인클라인 덤벨 프레스": {
+          "kg": 12,
+          "bothSide": true
+        },
+        "숄더 프레스 머신": {
+          "kg": 15,
+          "bothSide": false
+        },
+        "하이 풀리 (랫 풀다운)": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "케이블 크로스오버": {
+          "kg": 15,
+          "bothSide": true
+        },
+        "아령 — 원암 벤트오버 로우": {
+          "kg": 12,
+          "bothSide": false
+        },
+        "아령 — 사이드 레터럴 레이즈": {
+          "kg": 6,
+          "bothSide": false
+        }
+      }
+    },
+    "2026-07-23": {
+      "dayKey": "dayGa",
+      "checks": {
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "1-3": true,
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "2-4": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "3-3": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "4-3": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "5-3": true,
+        "7-0": true,
+        "7-1": true,
+        "7-2": true,
+        "7-3": true,
+        "7-4": true
+      },
+      "runDone": true,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 20,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 8,
+          "bothSide": false
+        },
+        "체스트 프레스 머신": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 인클라인 덤벨 프레스": {
+          "kg": 14,
+          "bothSide": true
+        },
+        "숄더 프레스 머신": {
+          "kg": 15,
+          "bothSide": false
+        },
+        "하이 풀리 (랫 풀다운)": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "케이블 크로스오버": {
+          "kg": 15,
+          "bothSide": true
+        },
+        "아령 — 원암 벤트오버 로우": {
+          "kg": 12,
+          "bothSide": false
+        },
+        "아령 — 사이드 레터럴 레이즈": {
+          "kg": 6,
+          "bothSide": false
+        }
+      }
+    },
+    "2026-07-25": {
+      "dayKey": "dayGa",
+      "checks": {
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "1-3": true,
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "2-4": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "3-3": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "4-3": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "5-3": true,
+        "7-0": true,
+        "7-1": true,
+        "7-2": true,
+        "7-3": true,
+        "7-4": true
+      },
+      "runDone": true,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 20,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 8,
+          "bothSide": false
+        },
+        "체스트 프레스 머신": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 인클라인 덤벨 프레스": {
+          "kg": 16,
+          "bothSide": true
+        },
+        "숄더 프레스 머신": {
+          "kg": 15,
+          "bothSide": false
+        },
+        "하이 풀리 (랫 풀다운)": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "케이블 크로스오버": {
+          "kg": 15,
+          "bothSide": true
+        },
+        "아령 — 원암 벤트오버 로우": {
+          "kg": 12,
+          "bothSide": false
+        },
+        "아령 — 사이드 레터럴 레이즈": {
+          "kg": 6,
+          "bothSide": false
+        }
+      }
+    },
+    "2026-07-27": {
+      "dayKey": "dayNa",
+      "checks": {
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "1-3": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "3-3": true,
+        "6-0": true,
+        "6-1": true,
+        "6-2": true,
+        "6-3": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "5-3": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "4-3": true,
+        "4-4": true,
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "2-4": true
+      },
+      "runDone": true,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 20,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 35,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 8,
+          "bothSide": false
+        },
+        "체스트 프레스 머신": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 인클라인 덤벨 프레스": {
+          "kg": 16,
+          "bothSide": true
+        },
+        "숄더 프레스 머신": {
+          "kg": 20,
+          "bothSide": false
+        },
+        "하이 풀리 (랫 풀다운)": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "케이블 크로스오버": {
+          "kg": 15,
+          "bothSide": true
+        },
+        "아령 — 원암 벤트오버 로우": {
+          "kg": 16,
+          "bothSide": false
+        },
+        "아령 — 사이드 레터럴 레이즈": {
+          "kg": 6,
+          "bothSide": false
+        }
+      }
+    },
+    "2026-07-29": {
+      "dayKey": "dayDa",
+      "checks": {
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "1-3": true,
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "3-3": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "4-3": true,
+        "7-0": true,
+        "7-1": true,
+        "7-2": true,
+        "7-3": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "5-3": true,
+        "6-0": true,
+        "6-1": true,
+        "6-2": true,
+        "6-3": true
+      },
+      "runDone": true,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 25,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 8,
+          "bothSide": false
+        },
+        "체스트 프레스 머신": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 인클라인 덤벨 프레스": {
+          "kg": 16,
+          "bothSide": true
+        },
+        "숄더 프레스 머신": {
+          "kg": 20,
+          "bothSide": false
+        },
+        "하이 풀리 (랫 풀다운)": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "케이블 크로스오버": {
+          "kg": 15,
+          "bothSide": true
+        },
+        "아령 — 원암 벤트오버 로우": {
+          "kg": 16,
+          "bothSide": false
+        },
+        "아령 — 사이드 레터럴 레이즈": {
+          "kg": 6,
+          "bothSide": false
+        }
+      }
+    },
+    "2026-08-01": {
+      "dayKey": "dayGa",
+      "checks": {
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "1-3": true,
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "2-4": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "3-3": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "4-3": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "5-3": true,
+        "6-0": true,
+        "6-1": true,
+        "6-2": true,
+        "6-3": true
+      },
+      "runDone": true,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 25,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 8,
+          "bothSide": false
+        },
+        "체스트 프레스 머신": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "아령 — 인클라인 덤벨 프레스": {
+          "kg": 16,
+          "bothSide": true
+        },
+        "숄더 프레스 머신": {
+          "kg": 20,
+          "bothSide": false
+        },
+        "하이 풀리 (랫 풀다운)": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "케이블 크로스오버": {
+          "kg": 15,
+          "bothSide": true
+        },
+        "아령 — 원암 벤트오버 로우": {
+          "kg": 16,
+          "bothSide": false
+        },
+        "아령 — 사이드 레터럴 레이즈": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "아령 — 리버스 플라이 (후면 삼각근)": {
+          "kg": 6,
+          "bothSide": true
+        }
+      }
+    },
+    "2026-08-07": {
+      "dayKey": "dayGa",
+      "checks": {
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "1-3": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "4-3": true,
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "2-4": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "3-3": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "5-3": true,
+        "6-0": true,
+        "6-1": true,
+        "6-2": true,
+        "6-3": true
+      },
+      "runDone": true,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 25,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 8,
+          "bothSide": false
+        },
+        "체스트 프레스 머신": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "아령 — 인클라인 덤벨 프레스": {
+          "kg": 16,
+          "bothSide": true
+        },
+        "숄더 프레스 머신": {
+          "kg": 20,
+          "bothSide": false
+        },
+        "하이 풀리 (랫 풀다운)": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "케이블 크로스오버": {
+          "kg": 15,
+          "bothSide": true
+        },
+        "아령 — 원암 벤트오버 로우": {
+          "kg": 16,
+          "bothSide": false
+        },
+        "아령 — 사이드 레터럴 레이즈": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "아령 — 리버스 플라이 (후면 삼각근)": {
+          "kg": 8,
+          "bothSide": true
+        }
+      }
+    },
+    "2026-08-09": {
+      "dayKey": "dayNa",
+      "checks": {
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "2-4": true,
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "1-3": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "3-3": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "5-3": true,
+        "6-0": true,
+        "6-1": true,
+        "6-2": true,
+        "6-3": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "4-3": true,
+        "4-4": true
+      },
+      "runDone": true,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 25,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 8,
+          "bothSide": false
+        },
+        "체스트 프레스 머신": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "아령 — 인클라인 덤벨 프레스": {
+          "kg": 16,
+          "bothSide": true
+        },
+        "숄더 프레스 머신": {
+          "kg": 20,
+          "bothSide": false
+        },
+        "하이 풀리 (랫 풀다운)": {
+          "kg": 50,
+          "bothSide": false
+        },
+        "케이블 크로스오버": {
+          "kg": 15,
+          "bothSide": true
+        },
+        "아령 — 원암 벤트오버 로우": {
+          "kg": 16,
+          "bothSide": false
+        },
+        "아령 — 사이드 레터럴 레이즈": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "아령 — 리버스 플라이 (후면 삼각근)": {
+          "kg": 8,
+          "bothSide": true
+        },
+        "아령 — 벤트오버 리버스 플라이": {
+          "kg": 6,
+          "bothSide": true
+        }
+      }
+    },
+    "2026-08-11": {
+      "dayKey": "dayDa",
+      "checks": {
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "1-3": true,
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "5-3": true,
+        "6-0": true,
+        "6-1": true,
+        "6-2": true,
+        "6-3": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "3-3": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "4-3": true
+      },
+      "runDone": true,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 50,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 25,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 10,
+          "bothSide": true
+        },
+        "체스트 프레스 머신": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "아령 — 인클라인 덤벨 프레스": {
+          "kg": 16,
+          "bothSide": true
+        },
+        "숄더 프레스 머신": {
+          "kg": 20,
+          "bothSide": false
+        },
+        "하이 풀리 (랫 풀다운)": {
+          "kg": 50,
+          "bothSide": false
+        },
+        "케이블 크로스오버": {
+          "kg": 15,
+          "bothSide": true
+        },
+        "아령 — 원암 벤트오버 로우": {
+          "kg": 16,
+          "bothSide": false
+        },
+        "아령 — 사이드 레터럴 레이즈": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "아령 — 리버스 플라이 (후면 삼각근)": {
+          "kg": 8,
+          "bothSide": true
+        },
+        "아령 — 벤트오버 리버스 플라이": {
+          "kg": 6,
+          "bothSide": true
+        }
+      }
+    },
+    "2026-08-14": {
+      "dayKey": "dayGa",
+      "checks": {
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "1-3": true,
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "2-4": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "3-3": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "4-3": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "5-3": true,
+        "6-0": true,
+        "6-1": true,
+        "6-2": true,
+        "6-3": true
+      },
+      "runDone": false,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 50,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 25,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 10,
+          "bothSide": true
+        },
+        "체스트 프레스 머신": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "아령 — 인클라인 덤벨 프레스": {
+          "kg": 14,
+          "bothSide": true
+        },
+        "숄더 프레스 머신": {
+          "kg": 20,
+          "bothSide": false
+        },
+        "하이 풀리 (랫 풀다운)": {
+          "kg": 50,
+          "bothSide": false
+        },
+        "케이블 크로스오버": {
+          "kg": 15,
+          "bothSide": true
+        },
+        "아령 — 원암 벤트오버 로우": {
+          "kg": 16,
+          "bothSide": false
+        },
+        "아령 — 사이드 레터럴 레이즈": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "아령 — 리버스 플라이 (후면 삼각근)": {
+          "kg": 8,
+          "bothSide": true
+        },
+        "아령 — 벤트오버 리버스 플라이": {
+          "kg": 6,
+          "bothSide": true
+        }
+      }
+    },
+    "2026-08-17": {
+      "dayKey": "dayNa",
+      "checks": {
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "2-4": true,
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "1-3": true,
+        "6-0": true,
+        "6-1": true,
+        "6-2": true,
+        "6-3": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "3-3": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "5-3": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "4-3": true,
+        "4-4": true
+      },
+      "runDone": true,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 50,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 25,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 10,
+          "bothSide": true
+        },
+        "체스트 프레스 머신": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "아령 — 인클라인 덤벨 프레스": {
+          "kg": 14,
+          "bothSide": true
+        },
+        "숄더 프레스 머신": {
+          "kg": 20,
+          "bothSide": false
+        },
+        "하이 풀리 (랫 풀다운)": {
+          "kg": 50,
+          "bothSide": false
+        },
+        "케이블 크로스오버": {
+          "kg": 15,
+          "bothSide": true
+        },
+        "아령 — 원암 벤트오버 로우": {
+          "kg": 16,
+          "bothSide": false
+        },
+        "아령 — 사이드 레터럴 레이즈": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "아령 — 리버스 플라이 (후면 삼각근)": {
+          "kg": 8,
+          "bothSide": true
+        },
+        "아령 — 벤트오버 리버스 플라이": {
+          "kg": 6,
+          "bothSide": true
+        }
+      }
+    },
+    "2026-08-21": {
+      "dayKey": "dayDa",
+      "checks": {},
+      "runDone": false,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 50,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 25,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 8,
+          "bothSide": true
+        },
+        "체스트 프레스 머신": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "아령 — 인클라인 덤벨 프레스": {
+          "kg": 14,
+          "bothSide": true
+        },
+        "숄더 프레스 머신": {
+          "kg": 20,
+          "bothSide": false
+        },
+        "하이 풀리 (랫 풀다운)": {
+          "kg": 50,
+          "bothSide": false
+        },
+        "케이블 크로스오버": {
+          "kg": 15,
+          "bothSide": true
+        },
+        "아령 — 원암 벤트오버 로우": {
+          "kg": 16,
+          "bothSide": false
+        },
+        "아령 — 사이드 레터럴 레이즈": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "아령 — 리버스 플라이 (후면 삼각근)": {
+          "kg": 8,
+          "bothSide": true
+        },
+        "아령 — 벤트오버 리버스 플라이": {
+          "kg": 6,
+          "bothSide": true
+        }
+      }
+    },
+    "2026-08-23": {
+      "dayKey": "dayGa",
+      "checks": {
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "1-3": true,
+        "6-0": true,
+        "6-1": true,
+        "6-2": true,
+        "6-3": true,
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "2-4": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "3-3": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "4-3": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "5-3": true
+      },
+      "runDone": true,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 50,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 25,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 8,
+          "bothSide": true
+        },
+        "체스트 프레스 머신": {
+          "kg": 50,
+          "bothSide": false
+        },
+        "아령 — 인클라인 덤벨 프레스": {
+          "kg": 14,
+          "bothSide": true
+        },
+        "숄더 프레스 머신": {
+          "kg": 20,
+          "bothSide": false
+        },
+        "하이 풀리 (랫 풀다운)": {
+          "kg": 50,
+          "bothSide": false
+        },
+        "케이블 크로스오버": {
+          "kg": 20,
+          "bothSide": true
+        },
+        "아령 — 원암 벤트오버 로우": {
+          "kg": 16,
+          "bothSide": false
+        },
+        "아령 — 사이드 레터럴 레이즈": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "아령 — 리버스 플라이 (후면 삼각근)": {
+          "kg": 8,
+          "bothSide": true
+        },
+        "아령 — 벤트오버 리버스 플라이": {
+          "kg": 6,
+          "bothSide": true
+        }
+      }
+    },
+    "2026-08-26": {
+      "dayKey": "dayNa",
+      "checks": {
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "1-3": true,
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "3-3": true,
+        "3-4": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "4-3": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "5-3": true,
+        "5-4": true,
+        "6-0": true,
+        "6-1": true,
+        "6-2": true,
+        "6-3": true
+      },
+      "runDone": true,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 50,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 25,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 8,
+          "bothSide": true
+        },
+        "체스트 프레스 머신": {
+          "kg": 50,
+          "bothSide": false
+        },
+        "아령 — 인클라인 덤벨 프레스": {
+          "kg": 14,
+          "bothSide": true
+        },
+        "숄더 프레스 머신": {
+          "kg": 20,
+          "bothSide": false
+        },
+        "하이 풀리 (랫 풀다운)": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "케이블 크로스오버": {
+          "kg": 20,
+          "bothSide": true
+        },
+        "아령 — 원암 벤트오버 로우": {
+          "kg": 16,
+          "bothSide": false
+        },
+        "아령 — 사이드 레터럴 레이즈": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "아령 — 리버스 플라이 (후면 삼각근)": {
+          "kg": 8,
+          "bothSide": true
+        },
+        "아령 — 벤트오버 리버스 플라이": {
+          "kg": 6,
+          "bothSide": true
+        },
+        "펙덱 리버스 플라이 (후면 삼각근)": {
+          "kg": 30,
+          "bothSide": false
+        }
+      }
+    },
+    "2026-08-28": {
+      "dayKey": "dayDa",
+      "checks": {
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "1-3": true,
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "3-3": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "4-3": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "5-3": true,
+        "6-0": true,
+        "6-1": true,
+        "6-2": true,
+        "6-3": true,
+        "7-0": true,
+        "7-1": true,
+        "7-2": true,
+        "7-3": true
+      },
+      "runDone": false,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 25,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 8,
+          "bothSide": true
+        },
+        "체스트 프레스 머신": {
+          "kg": 50,
+          "bothSide": false
+        },
+        "아령 — 인클라인 덤벨 프레스": {
+          "kg": 14,
+          "bothSide": true
+        },
+        "숄더 프레스 머신": {
+          "kg": 20,
+          "bothSide": false
+        },
+        "하이 풀리 (랫 풀다운)": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "케이블 크로스오버": {
+          "kg": 20,
+          "bothSide": true
+        },
+        "아령 — 원암 벤트오버 로우": {
+          "kg": 16,
+          "bothSide": false
+        },
+        "아령 — 사이드 레터럴 레이즈": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "아령 — 리버스 플라이 (후면 삼각근)": {
+          "kg": 8,
+          "bothSide": true
+        },
+        "아령 — 벤트오버 리버스 플라이": {
+          "kg": 6,
+          "bothSide": true
+        },
+        "펙덱 리버스 플라이 (후면 삼각근)": {
+          "kg": 30,
+          "bothSide": false
+        }
+      }
+    },
+    "2026-08-30": {
+      "dayKey": "dayGa",
+      "checks": {
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "1-3": true,
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "3-3": true,
+        "3-4": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "4-3": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "5-3": true,
+        "6-0": true,
+        "6-1": true,
+        "6-2": true,
+        "6-3": true
+      },
+      "runDone": false,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 25,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 8,
+          "bothSide": true
+        },
+        "체스트 프레스 머신": {
+          "kg": 50,
+          "bothSide": false
+        },
+        "아령 — 인클라인 덤벨 프레스": {
+          "kg": 14,
+          "bothSide": true
+        },
+        "숄더 프레스 머신": {
+          "kg": 20,
+          "bothSide": false
+        },
+        "하이 풀리 (랫 풀다운)": {
+          "kg": 50,
+          "bothSide": false
+        },
+        "케이블 크로스오버": {
+          "kg": 20,
+          "bothSide": true
+        },
+        "아령 — 원암 벤트오버 로우": {
+          "kg": 16,
+          "bothSide": false
+        },
+        "아령 — 사이드 레터럴 레이즈": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "아령 — 리버스 플라이 (후면 삼각근)": {
+          "kg": 8,
+          "bothSide": true
+        },
+        "아령 — 벤트오버 리버스 플라이": {
+          "kg": 6,
+          "bothSide": true
+        },
+        "펙덱 리버스 플라이 (후면 삼각근)": {
+          "kg": 30,
+          "bothSide": false
+        }
+      }
+    },
+    "2026-09-02": {
+      "dayKey": "dayNa",
+      "checks": {
+        "0-0": true,
+        "0-1": true,
+        "0-2": true,
+        "0-3": true,
+        "1-0": true,
+        "1-1": true,
+        "1-2": true,
+        "1-3": true,
+        "2-0": true,
+        "2-1": true,
+        "2-2": true,
+        "2-3": true,
+        "2-4": true,
+        "3-0": true,
+        "3-1": true,
+        "3-2": true,
+        "3-3": true,
+        "4-0": true,
+        "4-1": true,
+        "4-2": true,
+        "4-3": true,
+        "4-4": true,
+        "5-0": true,
+        "5-1": true,
+        "5-2": true,
+        "5-3": true
+      },
+      "runDone": true,
+      "weights": {
+        "펙덱 플라이": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "하이 풀리 (언더그립)": {
+          "kg": 45,
+          "bothSide": false
+        },
+        "케이블 우드찹": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 원암 덤벨 킥백": {
+          "kg": 6,
+          "bothSide": false
+        },
+        "케이블 바이셉스 컬": {
+          "kg": 25,
+          "bothSide": false
+        },
+        "케이블 트라이셉스 푸시다운": {
+          "kg": 40,
+          "bothSide": false
+        },
+        "아령 — 해머 컬": {
+          "kg": 8,
+          "bothSide": true
+        },
+        "체스트 프레스 머신": {
+          "kg": 50,
+          "bothSide": false
+        },
+        "아령 — 인클라인 덤벨 프레스": {
+          "kg": 14,
+          "bothSide": true
+        },
+        "숄더 프레스 머신": {
+          "kg": 25,
+          "bothSide": false
+        },
+        "하이 풀리 (랫 풀다운)": {
+          "kg": 50,
+          "bothSide": false
+        },
+        "케이블 크로스오버": {
+          "kg": 20,
+          "bothSide": true
+        },
+        "아령 — 원암 벤트오버 로우": {
+          "kg": 16,
+          "bothSide": false
+        },
+        "아령 — 사이드 레터럴 레이즈": {
+          "kg": 8,
+          "bothSide": true
+        },
+        "아령 — 리버스 플라이 (후면 삼각근)": {
+          "kg": 8,
+          "bothSide": true
+        },
+        "아령 — 벤트오버 리버스 플라이": {
+          "kg": 6,
+          "bothSide": true
+        },
+        "펙덱 리버스 플라이 (후면 삼각근)": {
+          "kg": 30,
+          "bothSide": false
+        }
+      }
+    }
+  },
+  "exportedAt": "2026-09-02T03:17:38.895Z"
+}
