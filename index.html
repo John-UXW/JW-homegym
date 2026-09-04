@@ -161,6 +161,20 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .debug-panel{position:fixed;top:0;left:0;right:0;max-height:40vh;overflow-y:auto;background:rgba(0,0,0,0.95);color:#4ade80;font-family:monospace;font-size:10px;padding:8px;z-index:99999;white-space:pre-wrap;word-break:break-all;border-bottom:2px solid #22c55e}
 .debug-panel.error{color:#f87171}
 .debug-toggle{position:fixed;top:2px;right:2px;width:22px;height:22px;background:rgba(0,0,0,0.3);color:rgba(255,255,255,0.4);border:none;border-radius:5px;font-size:11px;z-index:100000;display:flex;align-items:center;justify-content:center;line-height:1;padding:0}
+.pin-lock-screen{position:fixed;inset:0;background:#080810;z-index:999999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+.pin-lock-icon{font-size:48px;margin-bottom:16px}
+.pin-lock-title{font-size:18px;font-weight:900;color:#f1f5f9;margin-bottom:6px}
+.pin-lock-sub{font-size:12px;color:#64748b;margin-bottom:32px}
+.pin-dots{display:flex;gap:16px;margin-bottom:32px}
+.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);transition:all .15s}
+.pin-dot.filled{background:#6366f1;border-color:#6366f1}
+.pin-dot.error{background:#ef4444;border-color:#ef4444}
+.pin-keypad{display:grid;grid-template-columns:repeat(3,72px);gap:14px}
+.pin-key{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#f1f5f9;font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.pin-key:active{background:rgba(255,255,255,0.15)}
+.pin-key.empty{background:none;border:none}
+.pin-key.del{font-size:18px;color:#94a3b8}
+.pin-error-msg{color:#f87171;font-size:12px;font-weight:700;margin-top:16px;min-height:16px}
 .fab-github{background:linear-gradient(135deg,#1f2937,#374151);box-shadow:0 4px 16px rgba(0,0,0,0.5);width:40px;height:40px;font-size:15px}
 /* GitHub 설정 모달 */
 .gh-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px}
@@ -278,8 +292,34 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
     </div>
   </div>
 </div>
+<div id="pin-lock-screen" class="pin-lock-screen hidden">
+  <div class="pin-lock-icon">🔒</div>
+  <div class="pin-lock-title">홈짐 루틴 잠금</div>
+  <div class="pin-lock-sub" id="pin-lock-sub">PIN 번호 4자리를 입력하세요</div>
+  <div class="pin-dots" id="pin-dots">
+    <div class="pin-dot"></div>
+    <div class="pin-dot"></div>
+    <div class="pin-dot"></div>
+    <div class="pin-dot"></div>
+  </div>
+  <div class="pin-keypad">
+    <button class="pin-key" data-pin-num="1">1</button>
+    <button class="pin-key" data-pin-num="2">2</button>
+    <button class="pin-key" data-pin-num="3">3</button>
+    <button class="pin-key" data-pin-num="4">4</button>
+    <button class="pin-key" data-pin-num="5">5</button>
+    <button class="pin-key" data-pin-num="6">6</button>
+    <button class="pin-key" data-pin-num="7">7</button>
+    <button class="pin-key" data-pin-num="8">8</button>
+    <button class="pin-key" data-pin-num="9">9</button>
+    <button class="pin-key empty"></button>
+    <button class="pin-key" data-pin-num="0">0</button>
+    <button class="pin-key del" id="pin-del">⌫</button>
+  </div>
+  <div class="pin-error-msg" id="pin-error-msg"></div>
+</div>
 <div class="hdr">
-  <div class="hdr-sub">RPE-BASED · 주 2일 · 3세트 기준</div>
+  <div class="hdr-sub">RPE-BASED · 주 2~3일 · 4세트 기준</div>
   <div class="hdr-title">홈짐 머신 + 아령 루틴</div>
   <div class="hdr-date" id="today-date"></div>
   <div class="chip-row">
@@ -827,6 +867,7 @@ const WEIGHT_RECORDS = {
   '체스트 프레스 머신':           {kg:30, rpe:8,   date:TODAY},
   '아령 — 인클라인 덤벨 프레스': {kg:10, bothSide:true, date:TODAY},
   '케이블 크로스오버':            {kg:10, bothSide:true, date:TODAY},
+  '케이블 우드찹':                {kg:15, date:TODAY},
   '하이 풀리 (랫 풀다운)':        {kg:30, date:TODAY},
   '아령 — 리버스 플라이 (후면 삼각근)': {kg:null, bothSide:true, date:TODAY},
   // 나형 — 등·어깨
@@ -1436,6 +1477,157 @@ async function registerServiceWorker() {
   return _swRegistration;
 }
 
+// ── PIN 잠금 시스템 ───────────────────────────────────────
+const PIN_STORAGE_KEY  = 'gym_pin_hash';
+const PIN_SESSION_KEY  = 'gym_pin_unlocked_at';
+const AUTO_LOGOUT_MS   = 60 * 60 * 1000; // 1시간
+
+let _pinInput = '';
+let _pinAttemptFail = false;
+let _autoLogoutTimer = null;
+
+// 간단 해시 (완벽한 암호화는 아니지만 평문 저장은 피함)
+function simpleHash(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return 'h' + hash.toString(36);
+}
+
+function getSavedPinHash() {
+  try { return localStorage.getItem(PIN_STORAGE_KEY); } catch(_) { return null; }
+}
+function savePinHash(pin) {
+  try { localStorage.setItem(PIN_STORAGE_KEY, simpleHash(pin)); } catch(_) {}
+}
+function getUnlockedAt() {
+  try {
+    const v = sessionStorage.getItem(PIN_SESSION_KEY);
+    return v ? parseInt(v) : null;
+  } catch(_) { return null; }
+}
+function setUnlockedAt(ts) {
+  try { sessionStorage.setItem(PIN_SESSION_KEY, String(ts)); } catch(_) {}
+}
+function clearUnlockedAt() {
+  try { sessionStorage.removeItem(PIN_SESSION_KEY); } catch(_) {}
+}
+
+function isSessionValid() {
+  const unlockedAt = getUnlockedAt();
+  if (!unlockedAt) return false;
+  return (Date.now() - unlockedAt) < AUTO_LOGOUT_MS;
+}
+
+function showPinLock(isSetupMode) {
+  const screen = document.getElementById('pin-lock-screen');
+  const sub = document.getElementById('pin-lock-sub');
+  if (screen) screen.classList.remove('hidden');
+  if (sub) sub.textContent = isSetupMode
+    ? '처음 사용이시네요. 사용할 PIN 4자리를 설정하세요'
+    : 'PIN 번호 4자리를 입력하세요';
+  _pinInput = '';
+  updatePinDots();
+}
+
+function hidePinLock() {
+  const screen = document.getElementById('pin-lock-screen');
+  if (screen) screen.classList.add('hidden');
+}
+
+function updatePinDots() {
+  const dots = document.querySelectorAll('#pin-dots .pin-dot');
+  dots.forEach((d, i) => {
+    d.classList.toggle('filled', i < _pinInput.length);
+    d.classList.remove('error');
+  });
+}
+
+function showPinError(msg) {
+  const dots = document.querySelectorAll('#pin-dots .pin-dot');
+  dots.forEach(d => d.classList.add('error'));
+  const errEl = document.getElementById('pin-error-msg');
+  if (errEl) errEl.textContent = msg;
+  setTimeout(() => {
+    _pinInput = '';
+    updatePinDots();
+    if (errEl) errEl.textContent = '';
+  }, 600);
+}
+
+function handlePinDigit(digit) {
+  if (_pinInput.length >= 4) return;
+  _pinInput += digit;
+  updatePinDots();
+  if (_pinInput.length === 4) {
+    setTimeout(() => processPinEntry(), 150);
+  }
+}
+
+function handlePinDelete() {
+  _pinInput = _pinInput.slice(0, -1);
+  updatePinDots();
+}
+
+function processPinEntry() {
+  const savedHash = getSavedPinHash();
+  if (!savedHash) {
+    // 최초 설정 모드
+    savePinHash(_pinInput);
+    setUnlockedAt(Date.now());
+    hidePinLock();
+    startAutoLogoutWatcher();
+    showToast('✓ PIN 설정 완료');
+    return;
+  }
+  if (simpleHash(_pinInput) === savedHash) {
+    setUnlockedAt(Date.now());
+    hidePinLock();
+    startAutoLogoutWatcher();
+  } else {
+    showPinError('PIN이 일치하지 않습니다');
+  }
+}
+
+function lockApp() {
+  clearUnlockedAt();
+  showPinLock(false);
+  if (_autoLogoutTimer) clearInterval(_autoLogoutTimer);
+}
+
+function startAutoLogoutWatcher() {
+  if (_autoLogoutTimer) clearInterval(_autoLogoutTimer);
+  _autoLogoutTimer = setInterval(() => {
+    if (!isSessionValid()) {
+      lockApp();
+    }
+  }, 10000); // 10초마다 체크
+}
+
+// 사용자 활동 감지 시 세션 시간 갱신 (30분 카운트 리셋)
+function refreshSessionOnActivity() {
+  if (isSessionValid()) {
+    setUnlockedAt(Date.now());
+  }
+}
+
+function initPinLock() {
+  const savedHash = getSavedPinHash();
+  if (!savedHash) {
+    // 최초 사용 - PIN 설정 모드
+    showPinLock(true);
+  } else if (isSessionValid()) {
+    // 세션 유효 - 잠금 없이 통과
+    hidePinLock();
+    startAutoLogoutWatcher();
+  } else {
+    // 세션 만료 - 잠금 화면
+    showPinLock(false);
+  }
+}
+
 function ensureNotifyPermission() {
   try {
     if (!('Notification' in window)) { dlog('Notification API 없음', true); return; }
@@ -1840,6 +2032,7 @@ function exitEditMode() {
 
 // ── 13. 이벤트 위임 (document 레벨 통합) ─────────────────
 document.addEventListener('click', function(e) {
+  refreshSessionOnActivity();
   // ── 무게 저장 버튼 ──────────────────────────────────────
   const saveBtn = e.target.closest('.weight-save-btn');
   if (saveBtn) {
@@ -1940,11 +2133,24 @@ document.addEventListener('click', function(e) {
   }
 
   // ── 달력 이전/다음 월 ────────────────────────────────────
+  // ── PIN 키패드 (calAction 체크 전에 처리) ────────────────
+  const pinKey = e.target.closest('.pin-key[data-pin-num]');
+  if (pinKey) {
+    handlePinDigit(pinKey.dataset.pinNum);
+    return;
+  }
+  if (e.target.closest('#pin-del')) {
+    handlePinDelete();
+    return;
+  }
+
   // ── 타이머 건너뛰기 (calAction 체크 전에 처리) ────────────
   if (e.target.closest('#btn-timer-skip') || e.target.id === 'timer-overlay') {
     closeTimer();
     return;
   }
+
+
 
   const calAction = e.target.closest('[data-action]');
   if (!calAction) return;
@@ -2114,6 +2320,7 @@ dlog('현재 URL: ' + location.href);
 dlog('프로토콜: ' + location.protocol);
 
 // ── 14. 초기 실행 ─────────────────────────────────────────
+initPinLock();
 loadFromStorage();
 renderDay();
 
