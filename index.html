@@ -161,6 +161,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .debug-panel{position:fixed;top:0;left:0;right:0;max-height:40vh;overflow-y:auto;background:rgba(0,0,0,0.95);color:#4ade80;font-family:monospace;font-size:10px;padding:8px;z-index:99999;white-space:pre-wrap;word-break:break-all;border-bottom:2px solid #22c55e}
 .debug-panel.error{color:#f87171}
 .debug-toggle{position:fixed;top:2px;right:2px;width:22px;height:22px;background:rgba(0,0,0,0.3);color:rgba(255,255,255,0.4);border:none;border-radius:5px;font-size:11px;z-index:100000;display:flex;align-items:center;justify-content:center;line-height:1;padding:0}
+.next-set-btn{width:calc(100% - 24px);padding:16px;margin:8px 12px 4px;border-radius:12px;background:rgba(99,102,241,0.12);border:2px solid rgba(99,102,241,0.35);color:#a5b4fc;font-size:15px;font-weight:900;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .1s}
+.next-set-btn:active{background:rgba(99,102,241,0.25);transform:scale(0.98)}
+.next-set-btn.all-done{background:rgba(34,197,94,0.12);border-color:rgba(34,197,94,0.35);color:#4ade80}
 .pin-lock-screen{position:fixed;inset:0;background:#080810;z-index:999999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
 .pin-lock-icon{font-size:48px;margin-bottom:16px}
 .pin-lock-title{font-size:18px;font-weight:900;color:#f1f5f9;margin-bottom:6px}
@@ -1302,7 +1305,7 @@ function buildExBlock(b, bi, accent) {
 
   if (b.cutTag) wrap._cutTag = b.cutTag;
 
-  wrap.innerHTML = `<button class="ex-hdr" data-action="toggle-block"><div class="ex-hdr-left"><div class="ex-id" style="background:${idColor}22;border:1px solid ${idColor}44;color:${idColor}">${allDone?'✓':b.id}</div><div><div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap"><span class="ex-name ${allDone?'done':''}">${b.title}</span>${badges}</div><div class="ex-meta">${muscleDot(b.muscle)}${equipTag(b.equip)}<span class="progress-dot" style="color:${allDone?'#22c55e':'#475569'}">${doneSets}/${validSets.length}세트</span></div></div></div><div class="ex-hdr-right"><button class="bulk-btn" style="background:${bulkBg};border:1px solid ${bulkBorder};color:${bulkColor}" data-action="bulk-check" data-bi="${bi}" data-val="${!allDone}">${allDone?'✓ 완료':'일괄 완료'}</button><span class="rest-tag">${b.rest}</span><span class="chevron">▼</span></div></button><div class="ex-body">${weightBadgeHTML(b.title)}${illustHTML}<div style="overflow-x:auto"><table class="set-table"><thead><tr class="set-thead"><th>세트</th><th>횟수</th><th>RPE</th><th>포인트</th></tr></thead><tbody>${setRows}</tbody></table></div><div class="ex-tip" style="border-left-color:${isInjury?'#fbbf24':accent}">💡 ${b.tip}</div></div>`;
+  wrap.innerHTML = `<button class="ex-hdr" data-action="toggle-block"><div class="ex-hdr-left"><div class="ex-id" style="background:${idColor}22;border:1px solid ${idColor}44;color:${idColor}">${allDone?'✓':b.id}</div><div><div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap"><span class="ex-name ${allDone?'done':''}">${b.title}</span>${badges}</div><div class="ex-meta">${muscleDot(b.muscle)}${equipTag(b.equip)}<span class="progress-dot" style="color:${allDone?'#22c55e':'#475569'}">${doneSets}/${validSets.length}세트</span></div></div></div><div class="ex-hdr-right"><button class="bulk-btn" style="background:${bulkBg};border:1px solid ${bulkBorder};color:${bulkColor}" data-action="bulk-check" data-bi="${bi}" data-val="${!allDone}">${allDone?'✓ 완료':'일괄 완료'}</button><span class="rest-tag">${b.rest}</span><span class="chevron">▼</span></div></button><div class="ex-body"><button class="next-set-btn ${allDone?'all-done':''}" data-action="next-set" data-bi="${bi}">${allDone ? '✓ 전체 완료됨' : '▶ 다음 세트 완료 (' + (doneSets+1) + '/' + validSets.length + '세트)'}</button>${weightBadgeHTML(b.title)}${illustHTML}<div style="overflow-x:auto"><table class="set-table"><thead><tr class="set-thead"><th>세트</th><th>횟수</th><th>RPE</th><th>포인트</th></tr></thead><tbody>${setRows}</tbody></table></div><div class="ex-tip" style="border-left-color:${isInjury?'#fbbf24':accent}">💡 ${b.tip}</div></div>`;
   return wrap;
 }
 function toggleBlock(btn) {
@@ -2193,6 +2196,33 @@ document.addEventListener('click', function(e) {
     const bi  = parseInt(calAction.dataset.bi);
     const val = calAction.dataset.val === 'true';
     bulkCheck(bi, val);
+    return;
+  }
+
+  // ── 다음 세트 완료 (WU 포함, 순서대로 자동 체크) ────────
+  if (action === 'next-set') {
+    const bi = parseInt(calAction.dataset.bi);
+    const b  = ROUTINE[activeDay].blocks[bi];
+    if (!b || !b.sets) return;
+    // 체크 안 된 첫 번째 세트 찾기 (WU 포함, 전체 순서대로)
+    let targetSi = -1;
+    for (let si = 0; si < b.sets.length; si++) {
+      if (!checks[activeDay][bi + '-' + si]) { targetSi = si; break; }
+    }
+    if (targetSi === -1) return; // 이미 전체 완료
+    checks[activeDay][bi + '-' + targetSi] = true;
+    saveToStorage();
+    renderDay();
+    // 방금 체크한 세트에 맞는 휴식 타이머 시작
+    const day = ROUTINE[activeDay];
+    if (b.rest && b.rest !== '—') {
+      const nextSi = targetSi + 1;
+      const nextSet = b.sets[nextSi];
+      const nextInfo = nextSet
+        ? '세트 ' + nextSet.set + ' · ' + nextSet.reps + ' RPE ' + nextSet.rpe
+        : '마지막 세트 완료 🎉';
+      startRestTimer(b.rest, b.title, nextInfo, day.accent);
+    }
     return;
   }
 
