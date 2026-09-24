@@ -1701,6 +1701,26 @@ function fireVibrateNotification(title, exerciseTitle, vibratePattern) {
   fireRestNotification(title, exerciseTitle || '', vibratePattern);
 }
 
+// SW에 "N초 후 휴식 종료 알림"을 독립 예약 — 메인 페이지 setInterval이
+// 백그라운드에서 멈춰도 SW가 스스로 setTimeout으로 실행해 알림을 보장한다.
+function scheduleRestEndInSW(sec, exerciseTitle, nextSetInfo) {
+  try {
+    if (!_swRegistration || !_swRegistration.active) return;
+    _swRegistration.active.postMessage({
+      type: 'SCHEDULE_REST_END',
+      ms: sec * 1000,
+      title: '✅ 휴식 끝!',
+      body: (exerciseTitle || '운동') + ' — ' + (nextSetInfo || '다음 세트 시작하세요'),
+    });
+  } catch(_) {}
+}
+function cancelRestEndInSW() {
+  try {
+    if (!_swRegistration || !_swRegistration.active) return;
+    _swRegistration.active.postMessage({ type: 'CANCEL_REST_END' });
+  } catch(_) {}
+}
+
 function startRestTimer(restStr, exerciseTitle, nextSetInfo, accentColor) {
   // 휴식 시간 파싱 (예: '90초', '60초', '—')
   if (!restStr || restStr === '—') return;
@@ -1745,6 +1765,9 @@ function startRestTimer(restStr, exerciseTitle, nextSetInfo, accentColor) {
   // 카운트다운 시작 시 알림바에 상시 표시
   updatePersistentNotification(exerciseTitle, sec, sec, nextSetInfo);
 
+  // SW에 종료 시점 알림을 독립 예약 (메인 페이지가 백그라운드에서 멈춰도 종료 알림은 보장)
+  scheduleRestEndInSW(sec, exerciseTitle, nextSetInfo);
+
   // 카운트다운 시작
   clearInterval(_timerInterval);
   _timerInterval = setInterval(() => {
@@ -1776,7 +1799,9 @@ function startRestTimer(restStr, exerciseTitle, nextSetInfo, accentColor) {
       // 종료 알림은 항상 SW를 통해 (백그라운드 진동 보장)
       fireRestNotification('✅ 휴식 끝!', `${exerciseTitle || '운동'} — ${nextSetInfo || '다음 세트 시작하세요'}`, [200, 100, 200]);
       releaseWakeLock();
-      setTimeout(closeTimer, 300);
+      // 정상 종료: SW 예약은 취소하지 않음 — 이미 실행됐거나 곧 실행될 SW 알림이
+      // 중복이어도 tag가 같아 알림 1개로 병합되므로 안전. 취소하면 타이밍이 어긋날 때 노쇼 위험.
+      setTimeout(closeTimerUIOnly, 300);
     }
   }, 1000); // 알림바 초당 갱신에 맞춰 1초 간격
 }
@@ -1835,7 +1860,16 @@ function updateTimerDisplay(remaining, total) {
   }
 }
 
+// 건너뛰기 버튼 / 외부 취소용 — SW 예약도 함께 취소 (조기 종료했으므로 SW의 종료 알림은 불필요)
 function closeTimer() {
+  clearInterval(_timerInterval);
+  releaseWakeLock();
+  clearPersistentNotification();
+  cancelRestEndInSW();
+  document.getElementById('timer-overlay').classList.add('hidden');
+}
+// 정상 카운트다운 완료용 — SW 예약은 그대로 둠 (이미 알림이 발사됐거나 발사 예정이므로 취소하면 노쇼 위험)
+function closeTimerUIOnly() {
   clearInterval(_timerInterval);
   releaseWakeLock();
   clearPersistentNotification();
