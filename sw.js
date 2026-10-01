@@ -1,4 +1,5 @@
 // 홈짐 루틴 Service Worker
+// version: 2026-09-26-v2 (파일 변경 시 이 줄의 날짜/버전을 바꿔서 브라우저가 갱신을 확실히 감지하게 함)
 // 백그라운드 알림을 위해 필요 (모바일 크롬은 new Notification()을 지원하지 않고
 // ServiceWorkerRegistration.showNotification()만 지원함)
 //

@@ -1491,7 +1491,11 @@ let _notifyPermission = 'default';
 let _swRegistration = null;
 async function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) throw new Error('serviceWorker 미지원');
-  _swRegistration = await navigator.serviceWorker.register('./sw.js');
+  // updateViaCache:'none' → 브라우저가 sw.js 자체를 캐시하지 않고 매번 새로 받아
+  // 파일이 바뀌었을 때 갱신을 놓치는 문제를 방지
+  _swRegistration = await navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' });
+  // 새 버전이 있는지 명시적으로 확인해 즉시 갱신 시도
+  try { await _swRegistration.update(); } catch(_) {}
   return _swRegistration;
 }
 
@@ -2403,8 +2407,21 @@ initPinLock();
 loadFromStorage();
 renderDay();
 
+// SW 컨트롤러가 바뀌면(=새 버전이 활성화되면) 자동 새로고침 (1회만)
+let _swReloaded = false;
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (_swReloaded) return;
+    _swReloaded = true;
+    dlog('SW 컨트롤러 변경 감지 → 새로고침');
+    location.reload();
+  });
+}
+
 registerServiceWorker().then(() => {
   dlog('SW 등록 성공: ' + (_swRegistration ? _swRegistration.scope : 'null'));
+  dlog('SW active 상태: ' + (_swRegistration && _swRegistration.active ? _swRegistration.active.state : 'none'));
+  dlog('SW waiting 존재: ' + !!(_swRegistration && _swRegistration.waiting));
 }).catch(e => {
   dlog('SW 등록 실패: ' + e.message, true);
 });
