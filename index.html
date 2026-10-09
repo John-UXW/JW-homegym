@@ -157,6 +157,16 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .timer-next-label{font-size:10px;color:#475569;font-weight:700;margin-bottom:3px}
 .timer-next-text{font-size:24px;color:#e2e8f0;font-weight:800}
 .timer-skip-btn{width:100%;padding:12px;border-radius:10px;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);color:#a5b4fc;font-size:13px;font-weight:800;cursor:pointer}
+.timer-top-row{display:flex;justify-content:flex-end;margin-bottom:-6px}
+.timer-min-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#94a3b8;font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;cursor:pointer;line-height:1}
+.timer-mini-pill{position:fixed;right:14px;bottom:14px;z-index:8000;display:flex;align-items:center;gap:10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:999px;padding:8px 10px 8px 8px;box-shadow:0 6px 20px rgba(0,0,0,0.4);cursor:pointer}
+.timer-mini-pill.hidden{display:none}
+.timer-mini-ring{position:relative;width:36px;height:36px;flex-shrink:0}
+.timer-mini-svg{transform:rotate(-90deg)}
+.timer-mini-bg{fill:none;stroke:rgba(255,255,255,0.08);stroke-width:4}
+.timer-mini-prog{fill:none;stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset 1s linear}
+.timer-mini-sec{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#f1f5f9}
+.timer-mini-text{font-size:11px;color:#cbd5e1;font-weight:700;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* 수정 모드 배너 */
 .debug-panel{position:fixed;top:0;left:0;right:0;max-height:40vh;overflow-y:auto;background:rgba(0,0,0,0.95);color:#4ade80;font-family:monospace;font-size:10px;padding:8px;z-index:99999;white-space:pre-wrap;word-break:break-all;border-bottom:2px solid #22c55e}
 .debug-panel.error{color:#f87171}
@@ -260,6 +270,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 <!-- 휴식 타이머 팝업 -->
 <div id="timer-overlay" class="timer-overlay hidden">
   <div class="timer-box">
+    <div class="timer-top-row">
+      <button class="timer-min-btn" id="btn-timer-minimize">— 최소화</button>
+    </div>
     <div class="timer-badge" id="timer-badge">✅ 세트 완료!</div>
     <div class="timer-exercise" id="timer-exercise"></div>
     <div class="timer-set-info" id="timer-set-info"></div>
@@ -280,6 +293,19 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
     </div>
     <button class="timer-skip-btn" id="btn-timer-skip">건너뛰기 →</button>
   </div>
+</div>
+
+<!-- 휴식 타이머 최소화 상태 플로팅 핀 -->
+<div id="timer-mini-pill" class="timer-mini-pill hidden">
+  <div class="timer-mini-ring">
+    <svg class="timer-mini-svg" width="36" height="36" viewBox="0 0 36 36">
+      <circle class="timer-mini-bg" cx="18" cy="18" r="16"/>
+      <circle class="timer-mini-prog" id="timer-mini-prog" cx="18" cy="18" r="16"
+        stroke-dasharray="100.5" stroke-dashoffset="0"/>
+    </svg>
+    <div class="timer-mini-sec" id="timer-mini-sec">60</div>
+  </div>
+  <div class="timer-mini-text" id="timer-mini-text">휴식 중</div>
 </div>
 
 <div id="debug-panel" class="debug-panel hidden"></div>
@@ -517,6 +543,9 @@ function saveToFile() {
                `<!-- 휴식 타이머 팝업 -->
 <div id="timer-overlay" class="timer-overlay hidden">
   <div class="timer-box">
+    <div class="timer-top-row">
+      <button class="timer-min-btn" id="btn-timer-minimize">— 최소화</button>
+    </div>
     <div class="timer-badge" id="timer-badge">✅ 세트 완료!</div>
     <div class="timer-exercise" id="timer-exercise"></div>
     <div class="timer-set-info" id="timer-set-info"></div>
@@ -537,6 +566,19 @@ function saveToFile() {
     </div>
     <button class="timer-skip-btn" id="btn-timer-skip">건너뛰기 →</button>
   </div>
+</div>
+
+<!-- 휴식 타이머 최소화 상태 플로팅 핀 -->
+<div id="timer-mini-pill" class="timer-mini-pill hidden">
+  <div class="timer-mini-ring">
+    <svg class="timer-mini-svg" width="36" height="36" viewBox="0 0 36 36">
+      <circle class="timer-mini-bg" cx="18" cy="18" r="16"/>
+      <circle class="timer-mini-prog" id="timer-mini-prog" cx="18" cy="18" r="16"
+        stroke-dasharray="100.5" stroke-dashoffset="0"/>
+    </svg>
+    <div class="timer-mini-sec" id="timer-mini-sec">60</div>
+  </div>
+  <div class="timer-mini-text" id="timer-mini-text">휴식 중</div>
 </div>
 
 <script id="gym-data" type="application/json">${JSON.stringify(data)}<\/script>`);
@@ -1862,6 +1904,47 @@ function updateTimerDisplay(remaining, total) {
     progEl.style.stroke = remaining > total * 0.5 ? '#22c55e'
                         : remaining > total * 0.25 ? '#f59e0b' : '#ef4444';
   }
+
+  // 최소화 상태 플로팅 핀도 동일하게 갱신 (최소화 중에도 카운트 반영)
+  const miniSecEl  = document.getElementById('timer-mini-sec');
+  const miniProgEl = document.getElementById('timer-mini-prog');
+  if (miniSecEl) miniSecEl.textContent = remaining;
+  if (miniProgEl) {
+    const MINI_CIRC = 100.5;
+    const ratio  = remaining / total;
+    const offset = MINI_CIRC * (1 - ratio);
+    miniProgEl.style.transition = remaining < total ? 'stroke-dashoffset 1s linear' : 'none';
+    miniProgEl.style.strokeDashoffset = offset;
+    miniProgEl.style.stroke = remaining > total * 0.5 ? '#22c55e'
+                             : remaining > total * 0.25 ? '#f59e0b' : '#ef4444';
+  }
+}
+
+// ── 최소화 / 복원 ──────────────────────────────────────────
+// 카운트다운(_timerInterval, _timerRemaining, endTime, SW 예약)은 전혀 건드리지 않고
+// 팝업 표시 여부만 토글한다. 즉, 최소화해도 타이머는 멈추거나 초기화되지 않는다.
+let _timerMinimized = false;
+
+function minimizeTimer() {
+  if (!_timerInterval && _timerRemaining <= 0) return; // 진행중인 타이머 없으면 무시
+  _timerMinimized = true;
+  const overlay = document.getElementById('timer-overlay');
+  const pill    = document.getElementById('timer-mini-pill');
+  const miniTextEl = document.getElementById('timer-mini-text');
+  if (miniTextEl) {
+    const exText = document.getElementById('timer-exercise');
+    miniTextEl.textContent = (exText && exText.textContent) ? exText.textContent : '휴식 중';
+  }
+  if (overlay) overlay.classList.add('hidden');
+  if (pill) pill.classList.remove('hidden');
+}
+
+function restoreTimer() {
+  _timerMinimized = false;
+  const overlay = document.getElementById('timer-overlay');
+  const pill    = document.getElementById('timer-mini-pill');
+  if (pill) pill.classList.add('hidden');
+  if (overlay) overlay.classList.remove('hidden');
 }
 
 // 건너뛰기 버튼 / 외부 취소용 — SW 예약도 함께 취소 (조기 종료했으므로 SW의 종료 알림은 불필요)
@@ -1870,14 +1953,18 @@ function closeTimer() {
   releaseWakeLock();
   clearPersistentNotification();
   cancelRestEndInSW();
+  _timerMinimized = false;
   document.getElementById('timer-overlay').classList.add('hidden');
+  document.getElementById('timer-mini-pill').classList.add('hidden');
 }
 // 정상 카운트다운 완료용 — SW 예약은 그대로 둠 (이미 알림이 발사됐거나 발사 예정이므로 취소하면 노쇼 위험)
 function closeTimerUIOnly() {
   clearInterval(_timerInterval);
   releaseWakeLock();
   clearPersistentNotification();
+  _timerMinimized = false;
   document.getElementById('timer-overlay').classList.add('hidden');
+  document.getElementById('timer-mini-pill').classList.add('hidden');
 }
 
 function renderCalendar() {
@@ -2203,6 +2290,16 @@ document.addEventListener('click', function(e) {
   // ── 타이머 건너뛰기 (calAction 체크 전에 처리) ────────────
   if (e.target.closest('#btn-timer-skip') || e.target.id === 'timer-overlay') {
     closeTimer();
+    return;
+  }
+
+  // ── 타이머 최소화 / 복원 (카운트다운은 유지, 표시만 토글) ──
+  if (e.target.closest('#btn-timer-minimize')) {
+    minimizeTimer();
+    return;
+  }
+  if (e.target.closest('#timer-mini-pill')) {
+    restoreTimer();
     return;
   }
 
