@@ -156,9 +156,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .timer-next{background:rgba(255,255,255,0.04);border-radius:10px;padding:10px 14px;margin-bottom:18px;text-align:left}
 .timer-next-label{font-size:10px;color:#475569;font-weight:700;margin-bottom:3px}
 .timer-next-text{font-size:24px;color:#e2e8f0;font-weight:800}
-.timer-skip-btn{width:100%;padding:12px;border-radius:10px;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);color:#a5b4fc;font-size:13px;font-weight:800;cursor:pointer}
-.timer-top-row{display:flex;justify-content:flex-end;margin-bottom:-6px}
-.timer-min-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#94a3b8;font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;cursor:pointer;line-height:1}
+.timer-btn-row{display:flex;gap:8px}
+.timer-skip-btn{flex:1;padding:12px;border-radius:10px;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);color:#a5b4fc;font-size:13px;font-weight:800;cursor:pointer}
+.timer-min-btn{flex:1;padding:12px;border-radius:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#94a3b8;font-size:13px;font-weight:800;cursor:pointer}
 .timer-mini-pill{position:fixed;right:14px;bottom:14px;z-index:8000;display:flex;align-items:center;gap:10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:999px;padding:8px 10px 8px 8px;box-shadow:0 6px 20px rgba(0,0,0,0.4);cursor:pointer}
 .timer-mini-pill.hidden{display:none}
 .timer-mini-ring{position:relative;width:36px;height:36px;flex-shrink:0}
@@ -270,9 +270,6 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 <!-- 휴식 타이머 팝업 -->
 <div id="timer-overlay" class="timer-overlay hidden">
   <div class="timer-box">
-    <div class="timer-top-row">
-      <button class="timer-min-btn" id="btn-timer-minimize">— 최소화</button>
-    </div>
     <div class="timer-badge" id="timer-badge">✅ 세트 완료!</div>
     <div class="timer-exercise" id="timer-exercise"></div>
     <div class="timer-set-info" id="timer-set-info"></div>
@@ -291,7 +288,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
       <div class="timer-next-label">다음 세트</div>
       <div class="timer-next-text" id="timer-next-text"></div>
     </div>
-    <button class="timer-skip-btn" id="btn-timer-skip">건너뛰기 →</button>
+    <div class="timer-btn-row">
+      <button class="timer-skip-btn" id="btn-timer-skip">건너뛰기 →</button>
+      <button class="timer-min-btn" id="btn-timer-minimize">— 최소화</button>
+    </div>
   </div>
 </div>
 
@@ -543,9 +543,6 @@ function saveToFile() {
                `<!-- 휴식 타이머 팝업 -->
 <div id="timer-overlay" class="timer-overlay hidden">
   <div class="timer-box">
-    <div class="timer-top-row">
-      <button class="timer-min-btn" id="btn-timer-minimize">— 최소화</button>
-    </div>
     <div class="timer-badge" id="timer-badge">✅ 세트 완료!</div>
     <div class="timer-exercise" id="timer-exercise"></div>
     <div class="timer-set-info" id="timer-set-info"></div>
@@ -564,7 +561,10 @@ function saveToFile() {
       <div class="timer-next-label">다음 세트</div>
       <div class="timer-next-text" id="timer-next-text"></div>
     </div>
-    <button class="timer-skip-btn" id="btn-timer-skip">건너뛰기 →</button>
+    <div class="timer-btn-row">
+      <button class="timer-skip-btn" id="btn-timer-skip">건너뛰기 →</button>
+      <button class="timer-min-btn" id="btn-timer-minimize">— 최소화</button>
+    </div>
   </div>
 </div>
 
