@@ -1934,7 +1934,15 @@ function buildCalDetail(dStr) {
     </div>`;
   }
 
-  const day = ROUTINE[rec.dayKey];
+  // 구버전(v1)에만 있던 탭 키(가형/나형/다형 등)는 현재 ROUTINE에 없으므로
+  // 라벨/색상만 하드코딩된 레거시 맵으로 보여준다 (운동 종목 데이터는 ROUTINE에서 못 가져오지만
+  // 기록 자체는 사라지지 않고 달력에 표시됨).
+  const LEGACY_DAY_MAP = {
+    dayGa: {label:'가형', subtitle:'가슴 집중 풀세트 → 러닝 (구버전, 종목 상세는 더 이상 조회 불가)', accent:'#ec4899', blocks:[]},
+    dayNa: {label:'나형', subtitle:'등·어깨 집중 → 러닝 (구버전, 종목 상세는 더 이상 조회 불가)', accent:'#06b6d4', blocks:[]},
+    dayDa: {label:'다형', subtitle:'팔 집중 (이두·삼두) → 러닝 (구버전, 종목 상세는 더 이상 조회 불가)', accent:'#8b5cf6', blocks:[]},
+  };
+  const day = ROUTINE[rec.dayKey] || LEGACY_DAY_MAP[rec.dayKey];
   if (!day) return `<div class="cal-detail"><div style="padding:16px;text-align:center;color:#475569;font-size:12px">기록 형식 오류</div></div>`;
   const dayName = day.label;
   const accent  = day.accent;
