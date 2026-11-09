@@ -501,6 +501,28 @@ let workoutHistory = {};
 let calYear  = new Date().getFullYear();
 let calMonth = new Date().getMonth(); // 0-based
 
+// 운동 순서 변경(케이블 묶음)에 따른 기존 기록 체크 인덱스 보정 (1회)
+const ORDER_V2_MAP = {4:6, 5:7, 6:4, 7:5};
+function migrateOrderV2(data) {
+  if (!data || data.orderVer >= 2) return data;
+  const remap = c => {
+    if (!c) return c;
+    const out = {};
+    Object.keys(c).forEach(k => {
+      const m = k.match(/^(\d+)-(\d+)$/);
+      if (m && ORDER_V2_MAP[m[1]] != null) out[ORDER_V2_MAP[m[1]] + '-' + m[2]] = c[k];
+      else out[k] = c[k];
+    });
+    return out;
+  };
+  if (data.history) Object.values(data.history).forEach(rec => {
+    if (rec && (rec.dayKey === 'dayA' || rec.dayKey === 'dayB')) rec.checks = remap(rec.checks);
+  });
+  if (data.checks) ['dayA','dayB'].forEach(k => { if (data.checks[k]) data.checks[k] = remap(data.checks[k]); });
+  data.orderVer = 2;
+  return data;
+}
+
 // ── localStorage 저장/불러오기 ───────────────────────────
 function saveToStorage() {
   try {
@@ -508,6 +530,7 @@ function saveToStorage() {
       checks, runDone, weightInputs,
       activeDay, saveDate: TODAY,
       history: workoutHistory,
+      orderVer: 2,
     };
     // 1. 파일 내 gym-data 태그 업데이트 (메모리)
     const tag = document.getElementById('gym-data');
@@ -524,6 +547,7 @@ function saveToFile() {
       checks, runDone, weightInputs,
       activeDay, saveDate: TODAY,
       history: workoutHistory,
+      orderVer: 2,
     };
     // gym-data 태그에 최신 데이터 삽입
     const html = document.documentElement.outerHTML
@@ -587,6 +611,7 @@ function exportData() {
       checks, runDone, weightInputs,
       activeDay, saveDate: TODAY,
       history: workoutHistory,
+      orderVer: 2,
       exportedAt: new Date().toISOString(),
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
@@ -605,6 +630,7 @@ function importData(file) {
   reader.onload = function(evt) {
     try {
       const data = JSON.parse(evt.target.result);
+      migrateOrderV2(data);
       showModal('기록을 가져올까요?\n현재 화면의 기록을 덮어씁니다.', '가져오기', 'blue', () => {
         if (data.weightInputs) {
           weightInputs = data.weightInputs;
@@ -893,6 +919,7 @@ async function githubAutoSync(silent) {
     }
 
     // 데이터 반영
+    migrateOrderV2(data);
     if (data.weightInputs) {
       weightInputs = data.weightInputs;
       Object.entries(weightInputs).forEach(([title, val]) => {
@@ -927,6 +954,7 @@ async function githubBackup() {
       checks, runDone, weightInputs,
       activeDay, saveDate: TODAY,
       history: workoutHistory,
+      orderVer: 2,
       exportedAt: new Date().toISOString(),
     };
     const json     = JSON.stringify(data, null, 2);
@@ -989,6 +1017,7 @@ function loadFromStorage() {
     }
 
     if (data) {
+      migrateOrderV2(data);
       // 무게 복원 (날짜 무관)
       if (data.weightInputs) {
         weightInputs = data.weightInputs;
@@ -1122,7 +1151,7 @@ const ROUTINE = {
   dayA: {
     label:'A형', subtitle:'상체 무분할 A → 천국의 계단',
     accent:'#f97316', icon:'💪', tag:'상체 무분할 A', totalTime:'약 90분',
-    orderNote:'가슴 워밍업 → 후면 삼각근 → 가슴·등·어깨 복합 → 상부 흉근 고립 → 이두·승모근 마무리 → 천국의 계단 35분.',
+    orderNote:'가슴 워밍업 → 후면 삼각근 → 체스트 프레스 → 케이블 묶음(등 폭·이두·승모근) → 어깨 복합 → 상부 흉근 고립 → 복근 → 천국의 계단 35분.',
     blocks:[
       {id:'A',title:'펙덱 플라이',tag:'① 가슴 활성화 — 고립 워밍업',muscle:'대흉근',equip:'머신',
         sets:[{set:'1',reps:'15회',rpe:6,note:'넓게 열어 스트레치'},{set:'2',reps:'12회',rpe:7,note:'수축 끝 1초'},{set:'3',reps:'10회',rpe:7,note:'천천히 이완 3초'}],
@@ -1136,24 +1165,24 @@ const ROUTINE = {
       {id:'D',title:'하이 풀리 (와이드 그립)',tag:'④ 주동 복합 — 광배근 폭 (케이블①)',muscle:'광배근',equip:'케이블',cutTag:'여기까지 4개',
         sets:[{set:'1',reps:'12회',rpe:7,note:'와이드 그립, 가슴으로 당기기'},{set:'2',reps:'10회',rpe:8,note:'수축 시 팔꿈치 옆구리'},{set:'3',reps:'8회',rpe:8,note:'올라갈 때 충분히 늘이기'},{set:'4',reps:'8회',rpe:9,note:'광배근 고중량'}],
         tip:'와이드 그립 고정. 케이블 스테이션 연속 사용.',rest:'90초'},
-      {id:'E',title:'숄더 프레스 머신',tag:'⑤ 주동 복합 — 전면·중간 삼각근',muscle:'삼각근',equip:'머신',cutTag:'여기까지 5개',
+      {id:'G',title:'케이블 바이셉스 컬',tag:'⑤ 주동 — 이두근 기본 그립',muscle:'이두근',equip:'케이블',cutTag:'여기까지 5개',
+        sets:[{set:'1',reps:'12회',rpe:7,note:'낮은 풀리, 워밍업'},{set:'2',reps:'10회',rpe:8,note:'최상단 1초'},{set:'3',reps:'8회',rpe:9,note:'내릴 때 3초 이완'}],
+        tip:'고반복→고중량. 이두 기본 그립.',rest:'30초'},
+      {id:'H',title:'케이블 페이스풀',tag:'⑥ 자세 교정 — 승모근 중/하부·후면삼각근',muscle:'승모근',equip:'케이블',cutTag:'여기까지 6개',
+        sets:[{set:'1',reps:'15회',rpe:7,note:'로프 잡고 얼굴 쪽으로 당기기'},{set:'2',reps:'12회',rpe:8,note:'팔꿈치 높게, 날개뼈 모으기'},{set:'3',reps:'10회',rpe:8,note:'수축 끝 1초 정지'}],
+        tip:'거북목·라운드숄더 교정에 효과적. 팔꿈치를 어깨보다 높게 유지.',rest:'30초'},
+      {id:'E',title:'숄더 프레스 머신',tag:'⑦ 주동 복합 — 전면·중간 삼각근',muscle:'삼각근',equip:'머신',cutTag:'여기까지 7개',
         sets:[{set:'1',reps:'12회',rpe:7,note:'팔꿈치 90도에서 밀기'},{set:'2',reps:'10회',rpe:8,note:'완전 신전 1초'},{set:'3',reps:'8회',rpe:8,note:'으쓱 금지'},{set:'4',reps:'8회',rpe:9,note:'어깨 고중량 마무리'}],
         tip:'등 운동 후라 어깨 피로 주의. 세트마다 반복 줄이며 중량 올리기.',rest:'90초'},
-      {id:'F',title:'아령 — 인클라인 덤벨 프레스',tag:'⑥ 상부 흉근 — 각도 변화',muscle:'대흉근',equip:'아령',cutTag:'여기까지 6개',
+      {id:'F',title:'아령 — 인클라인 덤벨 프레스',tag:'⑧ 상부 흉근 — 각도 변화',muscle:'대흉근',equip:'아령',cutTag:'여기까지 8개 (풀)',
         sets:[{set:'1',reps:'12회',rpe:7,note:'45도, 상부 가슴 자극'},{set:'2',reps:'10회',rpe:8,note:'팔꿈치 바깥 45도'},{set:'3',reps:'8회',rpe:9,note:'정점에서 모아주기'}],
         tip:'상부 흉근 특화. 팔꿈치 바깥 45도 유지.',rest:'60초'},
-      {id:'G',title:'케이블 바이셉스 컬',tag:'⑦ 주동 — 이두근 기본 그립',muscle:'이두근',equip:'케이블',cutTag:'여기까지 7개',
-        sets:[{set:'1',reps:'12회',rpe:7,note:'낮은 풀리, 워밍업'},{set:'2',reps:'10회',rpe:8,note:'최상단 1초'},{set:'3',reps:'8회',rpe:9,note:'내릴 때 3초 이완'}],
-        tip:'고반복→고중량. 팔 마무리 첫 종목.',rest:'60초'},
-      {id:'H',title:'케이블 페이스풀',tag:'⑧ 자세 교정 — 승모근 중/하부·후면삼각근',muscle:'승모근',equip:'케이블',cutTag:'여기까지 8개 (풀)',
-        sets:[{set:'1',reps:'15회',rpe:7,note:'로프 잡고 얼굴 쪽으로 당기기'},{set:'2',reps:'12회',rpe:8,note:'팔꿈치 높게, 날개뼈 모으기'},{set:'3',reps:'10회',rpe:8,note:'수축 끝 1초 정지'}],
-        tip:'거북목·라운드숄더 교정에 효과적. 팔꿈치를 어깨보다 높게 유지.',rest:'60초'},
       {id:'I',title:'벤치 크런치',tag:'⑨ 복근 — 상복부',muscle:'복직근',equip:'벤치',
         sets:[{set:'1',reps:'20회',rpe:7,note:'벤치에 누워 상체 말아 올리기'},{set:'2',reps:'20회',rpe:8,note:'수축 끝 1초'},{set:'3',reps:'20회',rpe:8,note:'내릴 때 천천히'}],
-        tip:'목에 힘 빼고 복부로 말아 올리기. 반동 사용 금지.',rest:'45초'},
+        tip:'목에 힘 빼고 복부로 말아 올리기. 반동 사용 금지.',rest:'—'},
       {id:'J',title:'벤치 레그레이즈',tag:'⑩ 복근 — 하복부',muscle:'하복부',equip:'벤치',
         sets:[{set:'1',reps:'30회',rpe:7,note:'허리 벤치에 붙이기'},{set:'2',reps:'30회',rpe:8,note:'다리 내릴 때 바닥 닿기 직전 멈춤'},{set:'3',reps:'30회',rpe:8,note:'반동 없이 천천히'}],
-        tip:'허리가 뜨지 않게 복부에 힘 유지.',rest:'45초'},
+        tip:'허리가 뜨지 않게 복부에 힘 유지.',rest:'—'},
       {id:'🪜',title:'천국의 계단 (스텝밀)',tag:'마무리 유산소 — 35분',muscle:'유산소',equip:'스텝밀',isRunning:true,
         phases:[{phase:'0~5분',pace:'3',unit:' 레벨',rpe:5,label:'웜업'},{phase:'5~15분',pace:'6',unit:' 레벨',rpe:7,label:'본운동 1세트'},{phase:'15~20분',pace:'4',unit:' 레벨',rpe:6,label:'쿨다운 1세트'},{phase:'20~30분',pace:'6',unit:' 레벨',rpe:7,label:'본운동 2세트'},{phase:'30~35분',pace:'4',unit:' 레벨',rpe:6,label:'쿨다운 2세트'}],
         kcal:'약 300~350 kcal',tip:'상체 운동 후 마무리 유산소 겸 하체 자극. 무릎 부담 시 레벨 낮추기.',rest:'—'},
@@ -1164,7 +1193,7 @@ const ROUTINE = {
   dayB: {
     label:'B형', subtitle:'상체 무분할 B → 천국의 계단',
     accent:'#a78bfa', icon:'🔥', tag:'상체 무분할 B', totalTime:'약 90분',
-    orderNote:'가슴 워밍업 → 후면 삼각근 → 가슴·등·어깨 복합 → 측면 삼각근 고립 → 삼두·이두 마무리 → 천국의 계단 35분.',
+    orderNote:'가슴 워밍업 → 후면 삼각근 → 케이블 묶음(가슴 하부·등 폭·삼두·승모근) → 등 두께 → 측면 삼각근 → 복근 → 천국의 계단 35분.',
     blocks:[
       {id:'A',title:'펙덱 플라이',tag:'① 가슴 활성화 — 고립 워밍업',muscle:'대흉근',equip:'머신',
         sets:[{set:'1',reps:'15회',rpe:6,note:'넓게 열어 스트레치'},{set:'2',reps:'12회',rpe:7,note:'수축 끝 1초'},{set:'3',reps:'10회',rpe:7,note:'천천히 이완 3초'}],
@@ -1178,24 +1207,24 @@ const ROUTINE = {
       {id:'D',title:'하이 풀리 (와이드 그립)',tag:'④ 주동 복합 — 광배근 폭 (케이블②)',muscle:'광배근',equip:'케이블',cutTag:'여기까지 4개',
         sets:[{set:'1',reps:'12회',rpe:7,note:'와이드 그립, 가슴으로 당기기'},{set:'2',reps:'10회',rpe:8,note:'수축 시 팔꿈치 옆구리'},{set:'3',reps:'8회',rpe:8,note:'올라갈 때 충분히 늘이기'},{set:'4',reps:'8회',rpe:9,note:'광배근 고중량'}],
         tip:'와이드 그립 고정. 케이블 스테이션 연속 사용.',rest:'90초'},
-      {id:'E',title:'아령 — 원암 벤트오버 로우',tag:'⑤ 보조 복합 — 등 두께',muscle:'등 중앙',equip:'아령',cutTag:'여기까지 5개',
+      {id:'G',title:'케이블 트라이셉스 푸시다운',tag:'⑤ 주동 — 삼두근 전체',muscle:'삼두근',equip:'케이블',cutTag:'여기까지 5개',
+        sets:[{set:'1',reps:'12회',rpe:7,note:'팔꿈치 고정 워밍업'},{set:'2',reps:'10회',rpe:8,note:'완전 신전 1초'},{set:'3',reps:'8회',rpe:9,note:'로프 끝에서 벌리기'}],
+        tip:'팔 부피의 2/3 삼두. 팔꿈치 몸통에 고정.',rest:'40초'},
+      {id:'H',title:'케이블 페이스풀',tag:'⑥ 자세 교정 — 승모근 중/하부·후면삼각근',muscle:'승모근',equip:'케이블',cutTag:'여기까지 6개',
+        sets:[{set:'1',reps:'15회',rpe:7,note:'로프 잡고 얼굴 쪽으로 당기기'},{set:'2',reps:'12회',rpe:8,note:'팔꿈치 높게, 날개뼈 모으기'},{set:'3',reps:'10회',rpe:8,note:'수축 끝 1초 정지'}],
+        tip:'거북목·라운드숄더 교정에 효과적. 팔꿈치를 어깨보다 높게 유지.',rest:'30초'},
+      {id:'E',title:'아령 — 원암 벤트오버 로우',tag:'⑦ 보조 복합 — 등 두께',muscle:'등 중앙',equip:'아령',cutTag:'여기까지 7개',
         sets:[{set:'1',reps:'12회',rpe:7,note:'한쪽 손·무릎 벤치 지지'},{set:'2',reps:'10회',rpe:8,note:'팔꿈치 옆구리로'},{set:'3',reps:'8회',rpe:8,note:'수축 끝 1초'},{set:'4',reps:'8회',rpe:9,note:'등 두께 고중량'}],
         tip:'원암 점진 중량. 좌우 번갈아 수행.',rest:'90초'},
-      {id:'F',title:'아령 — 사이드 레터럴 레이즈',tag:'⑥ 고립 — 측면 삼각근',muscle:'측면 삼각근',equip:'아령',cutTag:'여기까지 6개',
+      {id:'F',title:'아령 — 사이드 레터럴 레이즈',tag:'⑧ 고립 — 측면 삼각근',muscle:'측면 삼각근',equip:'아령',cutTag:'여기까지 8개 (풀)',
         sets:[{set:'1',reps:'12회',rpe:7,note:'새끼손가락 살짝 올려'},{set:'2',reps:'10회',rpe:8,note:'어깨 높이 1초 정지'},{set:'3',reps:'8회',rpe:9,note:'천천히 내리며 버티기'}],
         tip:'어깨 고립은 고반복이 효과적. 승모근 개입 금지.',rest:'60초'},
-      {id:'G',title:'케이블 트라이셉스 푸시다운',tag:'⑦ 주동 — 삼두근 전체',muscle:'삼두근',equip:'케이블',cutTag:'여기까지 7개',
-        sets:[{set:'1',reps:'12회',rpe:7,note:'팔꿈치 고정 워밍업'},{set:'2',reps:'10회',rpe:8,note:'완전 신전 1초'},{set:'3',reps:'8회',rpe:9,note:'로프 끝에서 벌리기'}],
-        tip:'팔 부피의 2/3 삼두. 팔꿈치 몸통에 고정.',rest:'60초'},
-      {id:'H',title:'케이블 페이스풀',tag:'⑧ 자세 교정 — 승모근 중/하부·후면삼각근',muscle:'승모근',equip:'케이블',cutTag:'여기까지 8개 (풀)',
-        sets:[{set:'1',reps:'15회',rpe:7,note:'로프 잡고 얼굴 쪽으로 당기기'},{set:'2',reps:'12회',rpe:8,note:'팔꿈치 높게, 날개뼈 모으기'},{set:'3',reps:'10회',rpe:8,note:'수축 끝 1초 정지'}],
-        tip:'거북목·라운드숄더 교정에 효과적. 팔꿈치를 어깨보다 높게 유지.',rest:'60초'},
       {id:'I',title:'벤치 크런치',tag:'⑨ 복근 — 상복부',muscle:'복직근',equip:'벤치',
         sets:[{set:'1',reps:'20회',rpe:7,note:'벤치에 누워 상체 말아 올리기'},{set:'2',reps:'20회',rpe:8,note:'수축 끝 1초'},{set:'3',reps:'20회',rpe:8,note:'내릴 때 천천히'}],
-        tip:'목에 힘 빼고 복부로 말아 올리기. 반동 사용 금지.',rest:'45초'},
+        tip:'목에 힘 빼고 복부로 말아 올리기. 반동 사용 금지.',rest:'—'},
       {id:'J',title:'벤치 레그레이즈',tag:'⑩ 복근 — 하복부',muscle:'하복부',equip:'벤치',
         sets:[{set:'1',reps:'30회',rpe:7,note:'허리 벤치에 붙이기'},{set:'2',reps:'30회',rpe:8,note:'다리 내릴 때 바닥 닿기 직전 멈춤'},{set:'3',reps:'30회',rpe:8,note:'반동 없이 천천히'}],
-        tip:'허리가 뜨지 않게 복부에 힘 유지.',rest:'45초'},
+        tip:'허리가 뜨지 않게 복부에 힘 유지.',rest:'—'},
       {id:'🪜',title:'천국의 계단 (스텝밀)',tag:'마무리 유산소 — 35분',muscle:'유산소',equip:'스텝밀',isRunning:true,
         phases:[{phase:'0~5분',pace:'3',unit:' 레벨',rpe:5,label:'웜업'},{phase:'5~15분',pace:'6',unit:' 레벨',rpe:7,label:'본운동 1세트'},{phase:'15~20분',pace:'4',unit:' 레벨',rpe:6,label:'쿨다운 1세트'},{phase:'20~30분',pace:'6',unit:' 레벨',rpe:7,label:'본운동 2세트'},{phase:'30~35분',pace:'4',unit:' 레벨',rpe:6,label:'쿨다운 2세트'}],
         kcal:'약 300~350 kcal',tip:'상체 운동 후 마무리 유산소 겸 하체 자극. 무릎 부담 시 레벨 낮추기.',rest:'—'},
