@@ -101,6 +101,7 @@ html[data-theme="light"] img{filter:invert(1) hue-rotate(180deg)}
 .wb-record{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);border-radius:7px;padding:5px 10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:6px 0 4px}
 .wb-label{font-size:11px;color:#4ade80;font-weight:800}
 .wb-kg{font-size:12px;color:#86efac;font-weight:900}
+.wb-up{font-size:10px;color:#fbbf24;font-weight:700}
 .wb-warn{background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);border-radius:7px;padding:5px 10px;font-size:11px;color:#fbbf24;font-weight:700;margin:4px 0}
 .illust-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 12px 4px}
 .illust-card{border-radius:10px;padding:8px;display:flex;flex-direction:column;align-items:center;gap:4px}
@@ -282,15 +283,12 @@ html[data-theme="light"] img{filter:invert(1) hue-rotate(180deg)}
 .weight-save-btn{font-size:10px;padding:4px 10px;border-radius:6px;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);color:#818cf8;font-weight:700;cursor:pointer;transition:all .2s}
 .weight-save-btn:active{background:rgba(99,102,241,0.35)}
 .weight-saved{font-size:10px;color:#22c55e;font-weight:700;opacity:0;transition:opacity .3s}
-.endup-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:7px 12px 9px;border-top:1px solid rgba(255,255,255,0.05)}
-.endup-lbl{font-size:11px;font-weight:800;color:#fbbf24;margin-right:2px;white-space:nowrap}
-.endup-chip{font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;border:1px solid rgba(251,191,36,0.35);color:#fbbf24;background:rgba(251,191,36,0.06);cursor:pointer}
-.endup-chip.on{background:#fbbf24;color:#1c1400;border-color:#fbbf24}
-.endup-chip.clr{color:#64748b;border-color:rgba(255,255,255,0.12);background:none}
-.endup-input{width:50px;font-size:12px;padding:3px 2px;background:rgba(255,255,255,0.06);border:1px solid rgba(251,191,36,0.3);border-radius:7px;color:#f1f5f9;font-weight:800;text-align:center;outline:none}
-.endup-input:focus{border-color:#fbbf24}
-.endup-calc{width:100%;font-size:11px;color:#94a3b8}
-.endup-calc b{color:#fde68a;font-size:13px}
+.sw{display:flex;align-items:center;gap:4px}
+.setup-chip{font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px;border:1px solid rgba(251,191,36,.4);color:#fbbf24;background:rgba(251,191,36,.06);cursor:pointer}
+.setup-chip.on{background:#fbbf24;color:#1c1400;border-color:#fbbf24}
+.setup-input{width:46px;height:24px;font-size:11px;padding:2px;text-align:center;background:rgba(255,255,255,.06);border:1px solid rgba(251,191,36,.3);border-radius:6px;color:#f1f5f9;font-weight:800;outline:none}
+.setup-input.v,.setup-input:focus{border-color:#fbbf24}
+.sw-u{font-size:10px;color:#475569;font-weight:700}
 </style>
 </head>
 <body>
@@ -665,6 +663,7 @@ function importData(file) {
       migrateOrderV2(data);
       showModal('기록을 가져올까요?\n현재 화면의 기록을 덮어씁니다.', '가져오기', 'blue', () => {
         if (data.exerciseNotes) exerciseNotes = data.exerciseNotes;
+      stampSetUpDates(data);
       if (data.weightInputs) {
           weightInputs = data.weightInputs;
           Object.entries(weightInputs).forEach(([title, val]) => {
@@ -699,7 +698,7 @@ function exportHistoryToCsv() {
   try {
     const dates = Object.keys(workoutHistory).sort();
     if (dates.length === 0) { alert('내보낼 운동 기록이 없습니다.'); return; }
-    const header = ['날짜','요일타입','운동명','세트','완료여부','무게(kg)','양쪽여부','러닝완료','끝무게up(kg)'];
+    const header = ['날짜','요일타입','운동명','세트','완료여부','무게(kg)','양쪽여부','러닝완료','세트증량(kg)'];
     const rows = [header];
     dates.forEach(dStr => {
       const rec = workoutHistory[dStr];
@@ -720,7 +719,7 @@ function exportHistoryToCsv() {
               (w && w.kg != null) ? w.kg : '',
               (w && w.bothSide) ? 'Y' : '',
               '',
-              (w && w.endUp) ? w.endUp : '',
+              (w && w.setUp && (!w.setUpDate || w.setUpDate === dStr) && w.setUp[si]) ? w.setUp[si] : '',
             ]);
             wroteAny = true;
           });
@@ -789,7 +788,7 @@ function importCsvData(file) {
         date: header.indexOf('날짜'), dayType: header.indexOf('요일타입'),
         title: header.indexOf('운동명'), set: header.indexOf('세트'),
         done: header.indexOf('완료여부'), kg: header.indexOf('무게(kg)'),
-        both: header.indexOf('양쪽여부'), run: header.indexOf('러닝완료'), endup: header.indexOf('끝무게up(kg)'),
+        both: header.indexOf('양쪽여부'), run: header.indexOf('러닝완료'), endup: header.indexOf('세트증량(kg)'), endupOld: header.indexOf('끝무게up(kg)'),
       };
       if (idx.date < 0) { alert('CSV 형식이 올바르지 않습니다. (날짜 열 없음)'); return; }
 
@@ -827,9 +826,22 @@ function importCsvData(file) {
             if (si >= 0) rec.checks[bi+'-'+si] = true;
             const kgVal = idx.kg >= 0 ? r[idx.kg] : '';
             if (kgVal !== '') {
+              const _pw = rec.weights[title];
               rec.weights[title] = { kg: Number(kgVal), bothSide: (idx.both >= 0 && r[idx.both] === 'Y') };
+              if (_pw && _pw.setUp) { rec.weights[title].setUp = _pw.setUp; rec.weights[title].setUpDate = _pw.setUpDate; }
               const upVal = idx.endup >= 0 ? parseFloat(r[idx.endup]) : NaN;
-              if (!isNaN(upVal) && upVal > 0) rec.weights[title].endUp = upVal;
+              if (!isNaN(upVal) && upVal > 0 && si >= 0) {
+                rec.weights[title].setUp = rec.weights[title].setUp || {};
+                rec.weights[title].setUp[si] = upVal;
+                rec.weights[title].setUpDate = dStr;
+              }
+              // 구버전(끝무게up) 파일: 마지막 세트 증량으로 변환
+              const oldUp = idx.endupOld >= 0 ? parseFloat(r[idx.endupOld]) : NaN;
+              if (!isNaN(oldUp) && oldUp > 0 && si >= 0 && si === (b.sets.length - 1)) {
+                rec.weights[title].setUp = rec.weights[title].setUp || {};
+                rec.weights[title].setUp[si] = oldUp;
+                rec.weights[title].setUpDate = dStr;
+              }
             }
           }
         }
@@ -957,6 +969,7 @@ async function githubAutoSync(silent) {
     // 데이터 반영
     migrateOrderV2(data);
     if (data.exerciseNotes) exerciseNotes = data.exerciseNotes;
+      stampSetUpDates(data);
       if (data.weightInputs) {
       weightInputs = data.weightInputs;
       Object.entries(weightInputs).forEach(([title, val]) => {
@@ -1033,7 +1046,7 @@ function snapshotToday() {
     dayKey:  activeDay,
     checks:  JSON.parse(JSON.stringify(checks[activeDay] || {})),
     runDone: runDone[activeDay] || false,
-    weights: JSON.parse(JSON.stringify(weightInputs)),
+    weights: weightsForSnapshot(targetDate),
   };
   saveToStorage();
 }
@@ -1057,6 +1070,7 @@ function loadFromStorage() {
       migrateOrderV2(data);
       // 무게 복원 (날짜 무관)
       if (data.exerciseNotes) exerciseNotes = data.exerciseNotes;
+      stampSetUpDates(data);
       if (data.weightInputs) {
         weightInputs = data.weightInputs;
         Object.entries(weightInputs).forEach(([title, val]) => {
@@ -1324,43 +1338,81 @@ function muscleDot(muscle) {
   const c = MUSCLE_COLOR[muscle] || '#94a3b8';
   return `<span class="mdot" style="color:${c}"><span class="mdot-circle" style="background:${c}"></span>${muscle}</span>`;
 }
-function endUpRowHTML(title, inputId) {
-  const saved = weightInputs[title];
-  const up = (saved && saved.endUp != null) ? saved.endUp : null;
-  const chip = v => `<button class="endup-chip${up === v ? ' on' : ''}" data-endup="${v}">+${v}</button>`;
-  return `<div class="endup-row" data-wtitle="${escHtml(title)}" data-wid="${inputId}">
-    <span class="endup-lbl">+ 끝무게up</span>${chip(1)}${chip(2.5)}${chip(5)}
-    <input class="endup-input" type="number" min="0" max="100" step="0.5" placeholder="직접" value="${up != null && ![1,2.5,5].includes(up) ? up : ''}"><span class="weight-unit">kg</span>
-    <button class="endup-chip clr" data-endup="clear">초기화</button>
-    <div class="endup-calc"></div>
-  </div>`;
+// ── 세트별 증량: 날짜 단위로 새로 시작 (다음날엔 칩·칸 초기화, 이력은 '최근 기록'에 표시) ──
+function curSetUpDate() { return editDate || TODAY; }
+function currentSetUp(title) {
+  const w = weightInputs[title];
+  return (w && w.setUp && w.setUpDate === curSetUpDate()) ? w.setUp : {};
 }
-function refreshEndUpRow(row) {
-  const title = row.dataset.wtitle;
-  const saved = weightInputs[title];
-  const up = (saved && saved.endUp != null) ? saved.endUp : null;
-  row.querySelectorAll('.endup-chip[data-endup]').forEach(c => {
-    if (c.dataset.endup === 'clear') return;
-    c.classList.toggle('on', up !== null && parseFloat(c.dataset.endup) === up);
+function setLabelFor(title, k) {
+  for (const d of Object.keys(ROUTINE)) {
+    const blk = ROUTINE[d].blocks.find(x => x.title === title);
+    if (blk) return blk.sets && blk.sets[k] ? blk.sets[k].set : (+k + 1);
+  }
+  return +k + 1;
+}
+function setUpText(title, map) {
+  const parts = Object.keys(map).sort((x, y) => x - y).map(k => setLabelFor(title, k) + '세트 +' + map[k]);
+  return parts.join(', ');
+}
+// 현재 날짜 이전의 가장 최근 증량 이력 {date, setUp}
+function lastSetUpInfo(title) {
+  const cur = curSetUpDate();
+  let best = null;
+  const w = weightInputs[title];
+  if (w && w.setUp && w.setUpDate && w.setUpDate < cur && Object.keys(w.setUp).length) best = {date: w.setUpDate, setUp: w.setUp};
+  Object.keys(workoutHistory).forEach(d => {
+    if (d >= cur) return;
+    const hw = workoutHistory[d] && workoutHistory[d].weights && workoutHistory[d].weights[title];
+    if (hw && hw.setUp && (!hw.setUpDate || hw.setUpDate === d) && Object.keys(hw.setUp).length && (!best || d > best.date)) best = {date: d, setUp: hw.setUp};
   });
-  const inp = row.querySelector('.endup-input');
-  if (inp && document.activeElement !== inp) inp.value = (up != null && ![1,2.5,5].includes(up)) ? up : '';
-  const base = parseFloat((document.getElementById(row.dataset.wid) || {}).value);
-  const calc = row.querySelector('.endup-calc');
-  if (calc) calc.innerHTML = (up && !isNaN(base)) ? `마지막 세트 → <b>${Math.round((base + up) * 100) / 100}kg</b>` : '';
+  return best;
 }
-function setEndUp(row, val) {
-  const title = row.dataset.wtitle;
+function stampSetUpDates(data) {
+  if (!data || !data.weightInputs) return;
+  const d = data.saveDate || TODAY;
+  Object.values(data.weightInputs).forEach(w => { if (w && w.setUp && !w.setUpDate) w.setUpDate = d; });
+}
+function weightsForSnapshot(targetDate) {
+  const copy = JSON.parse(JSON.stringify(weightInputs));
+  Object.keys(copy).forEach(t => {
+    const w = copy[t];
+    if (w && w.setUp && w.setUpDate !== targetDate) { delete w.setUp; delete w.setUpDate; }
+  });
+  return copy;
+}
+
+function setUpCellHTML(title, si) {
+  const up = currentSetUp(title)[si];
+  const has = up != null;
+  return `<div class="sw" data-wtitle="${escHtml(title)}" data-si="${si}"><button class="setup-chip${up === 5 ? ' on' : ''}" data-setup="5">+5</button><input class="setup-input${has && up !== 5 ? ' v' : ''}" type="number" min="0" max="100" step="0.5" placeholder="직접" value="${has && up !== 5 ? up : ''}"><span class="sw-u">kg</span></div>`;
+}
+function refreshSetUpCell(sw) {
+  const up = currentSetUp(sw.dataset.wtitle)[sw.dataset.si];
+  const has = up != null;
+  const chip = sw.querySelector('.setup-chip');
+  const inp = sw.querySelector('.setup-input');
+  if (chip) chip.classList.toggle('on', up === 5);
+  if (inp) {
+    inp.classList.toggle('v', has && up !== 5);
+    if (document.activeElement !== inp) inp.value = (has && up !== 5) ? up : '';
+  }
+}
+function setSetUp(sw, val) {
+  const title = sw.dataset.wtitle, si = String(sw.dataset.si);
   const prev = weightInputs[title] || {};
   const rec = WEIGHT_RECORDS[title];
-  let kg = prev.kg != null ? prev.kg : (rec && rec.kg != null ? rec.kg : null);
-  if (kg == null) { const b = parseFloat((document.getElementById(row.dataset.wid) || {}).value); kg = isNaN(b) ? 0 : b; }
+  const kg = prev.kg != null ? prev.kg : (rec && rec.kg != null ? rec.kg : 0);
   const bothSide = prev.bothSide != null ? prev.bothSide : !!(rec && rec.bothSide);
-  const next = {kg, bothSide};
-  if (val != null && val > 0) next.endUp = val;
+  const next = Object.assign({}, prev, {kg, bothSide});
+  const m = Object.assign({}, currentSetUp(title));   // 다른 날짜 값이면 빈 상태에서 시작
+  if (val != null && val > 0) m[si] = val; else delete m[si];
+  if (Object.keys(m).length) { next.setUp = m; next.setUpDate = curSetUpDate(); }
+  else { delete next.setUp; delete next.setUpDate; }
+  delete next.endUp;
   weightInputs[title] = next;
   saveToStorage();
-  refreshEndUpRow(row);
+  refreshSetUpCell(sw);
 }
 
 function weightBadgeHTML(title) {
@@ -1379,10 +1431,12 @@ function weightBadgeHTML(title) {
     const fin  = rec && rec.finishNote
       ? `<span style="font-size:10px;background:rgba(250,204,21,0.12);color:#fbbf24;border:1px solid rgba(250,204,21,0.3);border-radius:5px;padding:1px 7px;font-weight:700">${rec.finishNote}</span>` : '';
     const rpeB = rec && rec.rpe ? rpeBadge(rec.rpe) : '';
+    const _lu = lastSetUpInfo(title);
+    const upHist = _lu ? `<span class="wb-up">증량 ${setUpText(title, _lu.setUp)}</span>` : '';
     // 최근 기록 배지 + 오늘 기록 상태 (저장 전엔 "유지")
     html += `<div class="wb-record" id="${inputId}-badge">
       <span class="wb-label">📋 최근 기록</span>
-      <span class="wb-kg">${kgText}</span>${rpeB}${fin}
+      <span class="wb-kg">${kgText}</span>${rpeB}${fin}${upHist}
       <span class="wb-arrow" id="${inputId}-arrow" style="display:none;color:#64748b;font-size:11px;font-weight:700;margin:0 2px">▶</span>
       <span class="wb-today" id="${inputId}-today" style="display:none;font-size:12px;font-weight:900;color:#4ade80"></span>
       <span class="wb-keep" id="${inputId}-keep" style="display:none;font-size:10px;color:#64748b;font-weight:700"></span>
@@ -1420,7 +1474,6 @@ function weightBadgeHTML(title) {
       <span class="weight-saved" id="${inputId}-saved">✓</span>
     </div>`;
   }
-  html += endUpRowHTML(title, inputId);
   return html;
 }
 
@@ -1552,14 +1605,14 @@ function buildExBlock(b, bi, accent) {
     const checked  = !!checks[activeDay][bi + '-' + si];
     const isWU     = s.set === 'WU';
     const setColor = isWU ? '#475569' : checked ? '#4ade80' : accent;
-    return `<tr class="set-row ${checked?'checked':''}" data-action="toggle-set" data-bi="${bi}" data-si="${si}"><td style="font-weight:900;color:${setColor};font-size:12px"><span class="cb-wrap"><span class="cb-box" style="border:2px solid ${isWU?'#47556944':(checked?'#22c55e':accent+'66')};background:${checked?'#22c55e':'transparent'};color:#fff">${checked?'✓':''}</span>${s.set}</span></td><td class="set-reps ${checked?'checked':''}">${s.reps}</td><td>${rpeBadge(s.rpe)}</td><td class="set-note">${s.note}</td></tr>`;
+    return `<tr class="set-row ${checked?'checked':''}" data-action="toggle-set" data-bi="${bi}" data-si="${si}"><td style="font-weight:900;color:${setColor};font-size:12px"><span class="cb-wrap"><span class="cb-box" style="border:2px solid ${isWU?'#47556944':(checked?'#22c55e':accent+'66')};background:${checked?'#22c55e':'transparent'};color:#fff">${checked?'✓':''}</span>${s.set}</span></td><td class="set-reps ${checked?'checked':''}">${s.reps}</td><td>${rpeBadge(s.rpe)}</td><td>${setUpCellHTML(b.title, si)}</td></tr>`;
   }).join('');
 
   const illustHTML = hasPhoto ? `<div class="illust-grid"><div class="illust-card" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06)"><div class="illust-label" style="color:#475569">⚪ 이완</div><div class="illust-svg-wrap">${photo.ext}</div><div class="illust-phase">시작 자세</div></div><div class="illust-card" style="background:${isCable?'rgba(34,211,238,0.06)':'rgba(167,139,250,0.06)'};border:1px solid ${isCable?'rgba(34,211,238,0.2)':'rgba(167,139,250,0.25)'}"><div class="illust-label" style="color:${isCable?'#22d3ee':'#a78bfa'}">${isCable?'🔵 수축':'🟣 수축'}</div><div class="illust-svg-wrap">${photo.con}</div><div class="illust-phase">끝 자세</div></div></div>` : '';
 
   if (b.cutTag) wrap._cutTag = b.cutTag;
 
-  wrap.innerHTML = `<button class="ex-hdr" data-action="toggle-block"><div class="ex-hdr-left"><div class="ex-id" style="background:${idColor}22;border:1px solid ${idColor}44;color:${idColor}">${allDone?'✓':b.id}</div><div><div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap"><span class="ex-name ${allDone?'done':''}">${b.title}</span>${badges}</div><div class="ex-meta">${muscleDot(b.muscle)}${equipTag(b.equip)}<span class="progress-dot" style="color:${allDone?'#22c55e':'#475569'}">${doneSets}/${validSets.length}세트</span></div></div></div><div class="ex-hdr-right"><button class="bulk-btn" style="background:${bulkBg};border:1px solid ${bulkBorder};color:${bulkColor}" data-action="bulk-check" data-bi="${bi}" data-val="${!allDone}">${allDone?'✓ 완료':'일괄 완료'}</button><span class="rest-tag">${b.rest}</span><span class="chevron">▼</span></div></button><div class="ex-body">${weightBadgeHTML(b.title)}${illustHTML}<button class="next-set-btn ${allDone?'all-done':''}" data-action="next-set" data-bi="${bi}">${allDone ? '✓ 전체 완료됨' : '▶ 다음 세트 완료 (' + (doneSets+1) + '/' + validSets.length + '세트)'}</button><div style="overflow-x:auto"><table class="set-table"><thead><tr class="set-thead"><th>세트</th><th>횟수</th><th>RPE</th><th>포인트</th></tr></thead><tbody>${setRows}</tbody></table></div><div class="ex-tip" style="border-left-color:${isInjury?'#fbbf24':accent}">💡 ${b.tip}</div><div class="note-wrap"><div class="note-label">📝 코멘트</div><textarea class="note-ta" data-note-title="${escHtml(b.title)}" rows="2" placeholder="이 운동 메모 (세팅·느낌·중량 등, 줄바꿈 가능)">${escHtml(exerciseNotes[b.title] || '')}</textarea><div class="note-row"><span class="note-status">${exerciseNotes[b.title] ? '✓ 저장됨' : ''}</span><button class="note-save" data-action="note-save" data-note-title="${escHtml(b.title)}">저장</button></div></div></div>`;
+  wrap.innerHTML = `<button class="ex-hdr" data-action="toggle-block"><div class="ex-hdr-left"><div class="ex-id" style="background:${idColor}22;border:1px solid ${idColor}44;color:${idColor}">${allDone?'✓':b.id}</div><div><div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap"><span class="ex-name ${allDone?'done':''}">${b.title}</span>${badges}</div><div class="ex-meta">${muscleDot(b.muscle)}${equipTag(b.equip)}<span class="progress-dot" style="color:${allDone?'#22c55e':'#475569'}">${doneSets}/${validSets.length}세트</span></div></div></div><div class="ex-hdr-right"><button class="bulk-btn" style="background:${bulkBg};border:1px solid ${bulkBorder};color:${bulkColor}" data-action="bulk-check" data-bi="${bi}" data-val="${!allDone}">${allDone?'✓ 완료':'일괄 완료'}</button><span class="rest-tag">${b.rest}</span><span class="chevron">▼</span></div></button><div class="ex-body">${weightBadgeHTML(b.title)}${illustHTML}<button class="next-set-btn ${allDone?'all-done':''}" data-action="next-set" data-bi="${bi}">${allDone ? '✓ 전체 완료됨' : '▶ 다음 세트 완료 (' + (doneSets+1) + '/' + validSets.length + '세트)'}</button><div style="overflow-x:auto"><table class="set-table"><thead><tr class="set-thead"><th>세트</th><th>횟수</th><th>RPE</th><th>증량</th></tr></thead><tbody>${setRows}</tbody></table></div><div class="ex-tip" style="border-left-color:${isInjury?'#fbbf24':accent}">💡 ${b.tip}</div><div class="note-wrap"><div class="note-label">📝 코멘트</div><textarea class="note-ta" data-note-title="${escHtml(b.title)}" rows="2" placeholder="이 운동 메모 (세팅·느낌·중량 등, 줄바꿈 가능)">${escHtml(exerciseNotes[b.title] || '')}</textarea><div class="note-row"><span class="note-status">${exerciseNotes[b.title] ? '✓ 저장됨' : ''}</span><button class="note-save" data-action="note-save" data-note-title="${escHtml(b.title)}">저장</button></div></div></div>`;
   return wrap;
 }
 function toggleBlock(btn) {
@@ -1658,7 +1711,6 @@ function updateWeekLine() {
 
 function renderDay() {
   ensureDayKeys();
-  setTimeout(() => document.querySelectorAll('.endup-row').forEach(refreshEndUpRow), 0);
   updateWeekLine();
   document.getElementById('today-date').textContent = '📅 ' + TODAY;
   const isCalTab = activeDay === 'cal';
@@ -2374,7 +2426,10 @@ function buildCalDetail(dStr) {
     let kgText = w && w.kg != null
       ? (w.bothSide ? `좌 ${w.kg}kg + 우 ${w.kg}kg` : `${w.kg}kg`)
       : '';
-    if (kgText && w.endUp) kgText += ` · 끝 +${w.endUp}kg`;
+    if (kgText && w && w.setUp && (!w.setUpDate || w.setUpDate === dStr)) {
+      const parts = Object.keys(w.setUp).sort((x, y) => x - y).map(k => `${b.sets[k] ? b.sets[k].set : (+k + 1)}세트 +${w.setUp[k]}`);
+      if (parts.length) kgText += ' · 증량 ' + parts.join(', ');
+    }
 
     blocks += `<div class="cal-record-block">
       <div class="cal-record-name">${b.title}</div>
@@ -2457,16 +2512,14 @@ function exitEditMode() {
 // ── 13. 이벤트 위임 (document 레벨 통합) ─────────────────
 document.addEventListener('click', function(e) {
   refreshSessionOnActivity();
-  // ── 끝무게up 칩 ─────────────────────────────────────────
-  const upChip = e.target.closest('.endup-chip');
-  if (upChip) {
-    const row = upChip.closest('.endup-row');
-    const t = upChip.dataset.endup;
-    if (t === 'clear') setEndUp(row, null);
-    else {
-      const v = parseFloat(t);
-      const cur = weightInputs[row.dataset.wtitle] && weightInputs[row.dataset.wtitle].endUp;
-      setEndUp(row, cur === v ? null : v);   // 같은 칩 다시 탭하면 해제
+  // ── 세트별 증량 (+5 / 직접 kg) : 세트 행 체크 토글과 분리 ──
+  const swEl = e.target.closest('.sw');
+  if (swEl) {
+    const chip = e.target.closest('.setup-chip');
+    if (chip) {
+      const v = parseFloat(chip.dataset.setup);
+      const cur = currentSetUp(swEl.dataset.wtitle)[swEl.dataset.si];
+      setSetUp(swEl, cur === v ? null : v);   // 같은 칩 다시 탭하면 해제
     }
     return;
   }
@@ -2481,9 +2534,9 @@ document.addEventListener('click', function(e) {
     if (!inp) return;
     const kg = parseFloat(inp.value);
     if (isNaN(kg) || kg < 0) return;
-    const _prevUp = weightInputs[title] && weightInputs[title].endUp;
+    const _prevW = weightInputs[title] || {};
     weightInputs[title] = {kg, bothSide: isBoth};
-    if (_prevUp) weightInputs[title].endUp = _prevUp;
+    if (_prevW.setUp) { weightInputs[title].setUp = _prevW.setUp; weightInputs[title].setUpDate = _prevW.setUpDate; }
     if (WEIGHT_RECORDS[title]) {
       WEIGHT_RECORDS[title].kg = kg;
       WEIGHT_RECORDS[title].bothSide = isBoth;
@@ -2766,21 +2819,12 @@ document.addEventListener('input', function(e) {
   }
 });
 
-// 무게 입력 변경 시 끝무게 계산 갱신
+// 세트별 증량 직접 입력
 document.addEventListener('input', function(e) {
-  if (!e.target.classList || !e.target.classList.contains('weight-input')) return;
-  const body = e.target.closest('.ex-body');
-  if (!body) return;
-  const row = body.querySelector('.endup-row');
-  if (row) refreshEndUpRow(row);
-});
-
-// 끝무게up 직접 입력
-document.addEventListener('input', function(e) {
-  if (!e.target.classList || !e.target.classList.contains('endup-input')) return;
-  const row = e.target.closest('.endup-row');
+  if (!e.target.classList || !e.target.classList.contains('setup-input')) return;
+  const sw = e.target.closest('.sw');
   const v = parseFloat(e.target.value);
-  setEndUp(row, isNaN(v) ? null : v);
+  setSetUp(sw, isNaN(v) ? null : v);
 });
 
 // 코멘트 입력 → 메모리 즉시 반영(재렌더 시 유지) + 자동 저장
