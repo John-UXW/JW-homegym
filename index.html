@@ -19,6 +19,7 @@
 <!-- 홈 화면 아이콘 (SVG 인라인 → base64) -->
 
 
+<script>try{var _t=localStorage.getItem('gym_theme');if(_t==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{background:#080810;color:#e2e8f0;font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;min-height:100vh;padding-bottom:calc(60px + env(safe-area-inset-bottom));padding-top:env(safe-area-inset-top)}
@@ -26,7 +27,21 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .hdr{background:linear-gradient(160deg,#0f0f1a,#080810);border-bottom:1px solid rgba(255,255,255,0.06);padding:22px 16px 0}
 .hdr-sub{font-size:9px;letter-spacing:.2em;color:#374151;margin-bottom:4px}
 .hdr-title{font-size:20px;font-weight:900;color:#fff;margin-bottom:2px}
-.hdr-date{font-size:11px;color:#64748b;margin-bottom:14px}
+.hdr-date{font-size:11px;color:#64748b;margin-bottom:6px}
+.hdr-week{font-size:11px;color:#94a3b8;margin-bottom:14px}
+.hdr{position:relative}
+.theme-btns{position:absolute;top:10px;right:30px;display:flex;gap:4px;z-index:5}
+.theme-btn{font-size:11px;font-weight:700;padding:4px 9px;border-radius:7px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.04);color:#94a3b8}
+.theme-btn.active{background:rgba(99,102,241,0.25);border-color:#6366f1;color:#c7d2fe}
+.note-wrap{margin:10px 12px 0}
+.note-label{font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:5px}
+.note-ta{width:100%;min-height:56px;resize:vertical;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#e2e8f0;font-family:inherit;font-size:13px;line-height:1.5;padding:8px 10px;white-space:pre-wrap}
+.note-ta:focus{outline:none;border-color:#6366f1}
+.note-row{display:flex;align-items:center;justify-content:space-between;margin-top:5px}
+.note-status{font-size:11px;color:#64748b}
+.note-save{font-size:12px;font-weight:700;padding:5px 14px;border-radius:7px;background:rgba(99,102,241,0.2);border:1px solid rgba(99,102,241,0.5);color:#c7d2fe}
+html[data-theme="light"]{filter:invert(1) hue-rotate(180deg);background:#fff}
+html[data-theme="light"] img{filter:invert(1) hue-rotate(180deg)}
 .chip-row{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
 .chip{font-size:10px;border-radius:5px;padding:2px 7px}
 .tabs{display:flex;border-bottom:1px solid rgba(255,255,255,0.07)}
@@ -267,6 +282,15 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .weight-save-btn{font-size:10px;padding:4px 10px;border-radius:6px;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);color:#818cf8;font-weight:700;cursor:pointer;transition:all .2s}
 .weight-save-btn:active{background:rgba(99,102,241,0.35)}
 .weight-saved{font-size:10px;color:#22c55e;font-weight:700;opacity:0;transition:opacity .3s}
+.endup-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:7px 12px 9px;border-top:1px solid rgba(255,255,255,0.05)}
+.endup-lbl{font-size:11px;font-weight:800;color:#fbbf24;margin-right:2px;white-space:nowrap}
+.endup-chip{font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;border:1px solid rgba(251,191,36,0.35);color:#fbbf24;background:rgba(251,191,36,0.06);cursor:pointer}
+.endup-chip.on{background:#fbbf24;color:#1c1400;border-color:#fbbf24}
+.endup-chip.clr{color:#64748b;border-color:rgba(255,255,255,0.12);background:none}
+.endup-input{width:50px;font-size:12px;padding:3px 2px;background:rgba(255,255,255,0.06);border:1px solid rgba(251,191,36,0.3);border-radius:7px;color:#f1f5f9;font-weight:800;text-align:center;outline:none}
+.endup-input:focus{border-color:#fbbf24}
+.endup-calc{width:100%;font-size:11px;color:#94a3b8}
+.endup-calc b{color:#fde68a;font-size:13px}
 </style>
 </head>
 <body>
@@ -351,9 +375,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
   <div class="pin-error-msg" id="pin-error-msg"></div>
 </div>
 <div class="hdr">
+  <div class="theme-btns"><button class="theme-btn" id="theme-light" data-action="theme-light">☀️ 라이트</button><button class="theme-btn" id="theme-dark" data-action="theme-dark">🌙 다크</button></div>
   <div class="hdr-sub">RPE-BASED · 주 2~3일 · 4세트 기준</div>
   <div class="hdr-title">홈짐 머신 + 아령 루틴</div>
   <div class="hdr-date" id="today-date"></div>
+  <div class="hdr-week" id="week-line"></div>
   <div class="chip-row">
     <span class="chip" style="color:#f97316;background:rgba(249,115,22,0.15);border:1px solid rgba(249,115,22,0.25)">⚙️ 체스트프레스</span>
     <span class="chip" style="color:#f97316;background:rgba(249,115,22,0.15);border:1px solid rgba(249,115,22,0.25)">⚙️ 펙덱플라이</span>
@@ -374,6 +400,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
       <div class="tab-label" style="color:#374151">🔥 B형</div>
       <div class="tab-sub" style="color:#1f2937">상체 무분할 B</div>
       <div class="tab-prog"><div class="tab-prog-fill" id="tabprog-b" style="background:#a78bfa;width:0%"></div></div>
+    </button>
+    <button class="tab-btn" id="tab-c" onclick="switchDay('dayC')">
+      <div class="tab-label" style="color:#374151">🧩 C형</div>
+      <div class="tab-sub" style="color:#1f2937">보강 (격주)</div>
+      <div class="tab-prog"><div class="tab-prog-fill" id="tabprog-c" style="background:#f472b6;width:0%"></div></div>
     </button>
     <button class="tab-btn" id="tab-cal" onclick="switchDay('cal')">
       <div class="tab-label" style="color:#374151">📅 기록</div>
@@ -490,11 +521,12 @@ function modalCancel() {
   _modalCallback = null;
 }
 let activeDay     = 'dayA';
-let checks        = {dayA:{}, dayB:{}};
-let runDone       = {dayA:false, dayB:false};
+let checks        = {dayA:{}, dayB:{}, dayC:{}};
+let runDone       = {dayA:false, dayB:false, dayC:false};
 let rpeOpen       = false;
 // 무게 입력: { 'exerciseTitle': { kg: 10, bothSide: true } }
 let weightInputs  = {};
+let exerciseNotes = {};
 // 운동 기록: { 'YYYY-MM-DD': { dayKey, checks, runDone, weights } }
 let workoutHistory = {};
 // 달력 현재 보기 연월
@@ -527,7 +559,7 @@ function migrateOrderV2(data) {
 function saveToStorage() {
   try {
     const data = {
-      checks, runDone, weightInputs,
+      checks, runDone, weightInputs, exerciseNotes,
       activeDay, saveDate: TODAY,
       history: workoutHistory,
       orderVer: 2,
@@ -544,7 +576,7 @@ function saveToStorage() {
 function saveToFile() {
   try {
     const data = {
-      checks, runDone, weightInputs,
+      checks, runDone, weightInputs, exerciseNotes,
       activeDay, saveDate: TODAY,
       history: workoutHistory,
       orderVer: 2,
@@ -608,7 +640,7 @@ function saveToFile() {
 function exportData() {
   try {
     const data = {
-      checks, runDone, weightInputs,
+      checks, runDone, weightInputs, exerciseNotes,
       activeDay, saveDate: TODAY,
       history: workoutHistory,
       orderVer: 2,
@@ -632,7 +664,8 @@ function importData(file) {
       const data = JSON.parse(evt.target.result);
       migrateOrderV2(data);
       showModal('기록을 가져올까요?\n현재 화면의 기록을 덮어씁니다.', '가져오기', 'blue', () => {
-        if (data.weightInputs) {
+        if (data.exerciseNotes) exerciseNotes = data.exerciseNotes;
+      if (data.weightInputs) {
           weightInputs = data.weightInputs;
           Object.entries(weightInputs).forEach(([title, val]) => {
             if (WEIGHT_RECORDS[title]) WEIGHT_RECORDS[title].kg = val.kg;
@@ -666,7 +699,7 @@ function exportHistoryToCsv() {
   try {
     const dates = Object.keys(workoutHistory).sort();
     if (dates.length === 0) { alert('내보낼 운동 기록이 없습니다.'); return; }
-    const header = ['날짜','요일타입','운동명','세트','완료여부','무게(kg)','양쪽여부','러닝완료'];
+    const header = ['날짜','요일타입','운동명','세트','완료여부','무게(kg)','양쪽여부','러닝완료','끝무게up(kg)'];
     const rows = [header];
     dates.forEach(dStr => {
       const rec = workoutHistory[dStr];
@@ -687,18 +720,19 @@ function exportHistoryToCsv() {
               (w && w.kg != null) ? w.kg : '',
               (w && w.bothSide) ? 'Y' : '',
               '',
+              (w && w.endUp) ? w.endUp : '',
             ]);
             wroteAny = true;
           });
         });
       }
       if (rec.runDone) {
-        rows.push([dStr, dayLabel, '트레드밀 러닝', '', 'O', '', '', 'O']);
+        rows.push([dStr, dayLabel, '트레드밀 러닝', '', 'O', '', '', 'O', '']);
         wroteAny = true;
       }
       if (!wroteAny) {
         // 운동 상세가 없어도(구버전 레코드 등) 날짜/타입만이라도 한 줄 남긴다
-        rows.push([dStr, dayLabel, '', '', '', '', '', rec.runDone ? 'O' : '']);
+        rows.push([dStr, dayLabel, '', '', '', '', '', rec.runDone ? 'O' : '', '']);
       }
     });
     const csvBody = rows.map(r => r.map(csvEscape).join(',')).join('\r\n');
@@ -755,7 +789,7 @@ function importCsvData(file) {
         date: header.indexOf('날짜'), dayType: header.indexOf('요일타입'),
         title: header.indexOf('운동명'), set: header.indexOf('세트'),
         done: header.indexOf('완료여부'), kg: header.indexOf('무게(kg)'),
-        both: header.indexOf('양쪽여부'), run: header.indexOf('러닝완료'),
+        both: header.indexOf('양쪽여부'), run: header.indexOf('러닝완료'), endup: header.indexOf('끝무게up(kg)'),
       };
       if (idx.date < 0) { alert('CSV 형식이 올바르지 않습니다. (날짜 열 없음)'); return; }
 
@@ -794,6 +828,8 @@ function importCsvData(file) {
             const kgVal = idx.kg >= 0 ? r[idx.kg] : '';
             if (kgVal !== '') {
               rec.weights[title] = { kg: Number(kgVal), bothSide: (idx.both >= 0 && r[idx.both] === 'Y') };
+              const upVal = idx.endup >= 0 ? parseFloat(r[idx.endup]) : NaN;
+              if (!isNaN(upVal) && upVal > 0) rec.weights[title].endUp = upVal;
             }
           }
         }
@@ -920,7 +956,8 @@ async function githubAutoSync(silent) {
 
     // 데이터 반영
     migrateOrderV2(data);
-    if (data.weightInputs) {
+    if (data.exerciseNotes) exerciseNotes = data.exerciseNotes;
+      if (data.weightInputs) {
       weightInputs = data.weightInputs;
       Object.entries(weightInputs).forEach(([title, val]) => {
         if (WEIGHT_RECORDS[title]) WEIGHT_RECORDS[title].kg = val.kg;
@@ -951,7 +988,7 @@ async function githubBackup() {
   showToast('🐙 GitHub 업로드 중...', 30000);
   try {
     const data = {
-      checks, runDone, weightInputs,
+      checks, runDone, weightInputs, exerciseNotes,
       activeDay, saveDate: TODAY,
       history: workoutHistory,
       orderVer: 2,
@@ -1019,6 +1056,7 @@ function loadFromStorage() {
     if (data) {
       migrateOrderV2(data);
       // 무게 복원 (날짜 무관)
+      if (data.exerciseNotes) exerciseNotes = data.exerciseNotes;
       if (data.weightInputs) {
         weightInputs = data.weightInputs;
         Object.entries(weightInputs).forEach(([title, val]) => {
@@ -1036,16 +1074,16 @@ function loadFromStorage() {
         if (data.activeDay && data.activeDay !== 'cal') activeDay = data.activeDay;
       } else {
         // 날짜 바뀌면 체크/런만 초기화
-        checks  = {dayA:{}, dayB:{}};
-        runDone = {dayA:false, dayB:false};
+        checks  = {dayA:{}, dayB:{}, dayC:{}};
+        runDone = {dayA:false, dayB:false, dayC:false};
       }
     }
   } catch(e) { console.warn('불러오기 실패:', e); }
 }
 function resetChecks() {
   showModal('완료 기록을 초기화할까요?\n무게 기록은 그대로 유지됩니다.', '초기화', '', () => {
-    checks  = {dayA:{}, dayB:{}};
-    runDone = {dayA:false, dayB:false};
+    checks  = {dayA:{}, dayB:{}, dayC:{}};
+    runDone = {dayA:false, dayB:false, dayC:false};
     saveToStorage();
     renderDay();
   });
@@ -1231,6 +1269,44 @@ const ROUTINE = {
     ],
     cooldown:'가슴·어깨 스트레칭 3분 + 팔 스트레칭 2분 + 심호흡 1분',
   },
+  dayC: {
+    label:'C형', subtitle:'보강 — A·B 전용 운동 보충 → 천국의 계단',
+    accent:'#f472b6', icon:'🧩', tag:'보강형 (격주 가능)', totalTime:'약 60분',
+    orderNote:'머신(가슴·어깨 프레스) → 아령(상부 흉근·등 두께·측면 삼각근) → 케이블(이두·삼두) → 복근 → 천국의 계단. A·B에서 한쪽에만 있던 운동을 보충하는 날로, 빠지거나 격주로 해도 유지에 지장 없음.',
+    blocks:[
+      {id:'A',title:'체스트 프레스 머신',tag:'① 주동 복합 — 가슴 최대 동원',muscle:'대흉근',equip:'머신',
+        sets:[{set:'1',reps:'8회',rpe:8,note:'고중량 집중'},{set:'2',reps:'8회',rpe:9,note:'가슴 최대 자극'}],
+        tip:'내릴 때 3초 버티기. 세트마다 반복 줄이며 중량 올리기.',rest:'90초'},
+      {id:'B',title:'숄더 프레스 머신',tag:'② 주동 복합 — 전면·중간 삼각근',muscle:'삼각근',equip:'머신',
+        sets:[{set:'1',reps:'8회',rpe:8,note:'으쓱 금지'},{set:'2',reps:'8회',rpe:9,note:'어깨 고중량 마무리'}],
+        tip:'등 운동 후라 어깨 피로 주의. 세트마다 반복 줄이며 중량 올리기.',rest:'90초'},
+      {id:'C',title:'아령 — 인클라인 덤벨 프레스',tag:'③ 상부 흉근 — 각도 변화',muscle:'대흉근',equip:'아령',
+        sets:[{set:'1',reps:'10회',rpe:8,note:'팔꿈치 바깥 45도'},{set:'2',reps:'8회',rpe:9,note:'정점에서 모아주기'}],
+        tip:'상부 흉근 특화. 팔꿈치 바깥 45도 유지.',rest:'60초'},
+      {id:'D',title:'아령 — 원암 벤트오버 로우',tag:'④ 보조 복합 — 등 두께',muscle:'등 중앙',equip:'아령',cutTag:'여기까지 4개',
+        sets:[{set:'1',reps:'8회',rpe:8,note:'수축 끝 1초'},{set:'2',reps:'8회',rpe:9,note:'등 두께 고중량'}],
+        tip:'원암 점진 중량. 좌우 번갈아 수행.',rest:'90초'},
+      {id:'E',title:'아령 — 사이드 레터럴 레이즈',tag:'⑤ 고립 — 측면 삼각근',muscle:'측면 삼각근',equip:'아령',cutTag:'여기까지 5개',
+        sets:[{set:'1',reps:'10회',rpe:8,note:'어깨 높이 1초 정지'},{set:'2',reps:'8회',rpe:9,note:'천천히 내리며 버티기'}],
+        tip:'어깨 고립은 고반복이 효과적. 승모근 개입 금지.',rest:'60초'},
+      {id:'F',title:'케이블 바이셉스 컬',tag:'⑥ 주동 — 이두근 기본 그립',muscle:'이두근',equip:'케이블',cutTag:'여기까지 6개',
+        sets:[{set:'1',reps:'10회',rpe:8,note:'최상단 1초'},{set:'2',reps:'8회',rpe:9,note:'내릴 때 3초 이완'}],
+        tip:'고반복→고중량. 이두 기본 그립.',rest:'30초'},
+      {id:'G',title:'케이블 트라이셉스 푸시다운',tag:'⑦ 주동 — 삼두근 전체',muscle:'삼두근',equip:'케이블',cutTag:'여기까지 7개 (풀)',
+        sets:[{set:'1',reps:'10회',rpe:8,note:'완전 신전 1초'},{set:'2',reps:'8회',rpe:9,note:'로프 끝에서 벌리기'}],
+        tip:'팔 부피의 2/3 삼두. 팔꿈치 몸통에 고정.',rest:'40초'},
+      {id:'H',title:'벤치 크런치',tag:'⑧ 복근 — 상복부',muscle:'복직근',equip:'벤치',
+        sets:[{set:'1',reps:'20회',rpe:7,note:'벤치에 누워 상체 말아 올리기'},{set:'2',reps:'20회',rpe:8,note:'수축 끝 1초'},{set:'3',reps:'20회',rpe:8,note:'내릴 때 천천히'}],
+        tip:'목에 힘 빼고 복부로 말아 올리기. 반동 사용 금지.',rest:'—'},
+      {id:'I',title:'벤치 레그레이즈',tag:'⑨ 복근 — 하복부',muscle:'하복부',equip:'벤치',
+        sets:[{set:'1',reps:'30회',rpe:7,note:'허리 벤치에 붙이기'},{set:'2',reps:'30회',rpe:8,note:'다리 내릴 때 바닥 닿기 직전 멈춤'},{set:'3',reps:'30회',rpe:8,note:'반동 없이 천천히'}],
+        tip:'허리가 뜨지 않게 복부에 힘 유지.',rest:'—'},
+      {id:'🪜',title:'천국의 계단 (스텝밀)',tag:'마무리 유산소 — 35분',muscle:'유산소',equip:'스텝밀',isRunning:true,
+        phases:[{phase:'0~5분',pace:'3',unit:' 레벨',rpe:5,label:'웜업'},{phase:'5~15분',pace:'6',unit:' 레벨',rpe:7,label:'본운동 1세트'},{phase:'15~20분',pace:'4',unit:' 레벨',rpe:6,label:'쿨다운 1세트'},{phase:'20~30분',pace:'6',unit:' 레벨',rpe:7,label:'본운동 2세트'},{phase:'30~35분',pace:'4',unit:' 레벨',rpe:6,label:'쿨다운 2세트'}],
+        kcal:'약 300~350 kcal',tip:'상체 운동 후 마무리 유산소 겸 하체 자극. 무릎 부담 시 레벨 낮추기.',rest:'—'},
+    ],
+    cooldown:'가슴·어깨 스트레칭 3분 + 팔 스트레칭 2분 + 심호흡 1분',
+  },
 };
 
 
@@ -1248,6 +1324,45 @@ function muscleDot(muscle) {
   const c = MUSCLE_COLOR[muscle] || '#94a3b8';
   return `<span class="mdot" style="color:${c}"><span class="mdot-circle" style="background:${c}"></span>${muscle}</span>`;
 }
+function endUpRowHTML(title, inputId) {
+  const saved = weightInputs[title];
+  const up = (saved && saved.endUp != null) ? saved.endUp : null;
+  const chip = v => `<button class="endup-chip${up === v ? ' on' : ''}" data-endup="${v}">+${v}</button>`;
+  return `<div class="endup-row" data-wtitle="${escHtml(title)}" data-wid="${inputId}">
+    <span class="endup-lbl">+ 끝무게up</span>${chip(1)}${chip(2.5)}${chip(5)}
+    <input class="endup-input" type="number" min="0" max="100" step="0.5" placeholder="직접" value="${up != null && ![1,2.5,5].includes(up) ? up : ''}"><span class="weight-unit">kg</span>
+    <button class="endup-chip clr" data-endup="clear">초기화</button>
+    <div class="endup-calc"></div>
+  </div>`;
+}
+function refreshEndUpRow(row) {
+  const title = row.dataset.wtitle;
+  const saved = weightInputs[title];
+  const up = (saved && saved.endUp != null) ? saved.endUp : null;
+  row.querySelectorAll('.endup-chip[data-endup]').forEach(c => {
+    if (c.dataset.endup === 'clear') return;
+    c.classList.toggle('on', up !== null && parseFloat(c.dataset.endup) === up);
+  });
+  const inp = row.querySelector('.endup-input');
+  if (inp && document.activeElement !== inp) inp.value = (up != null && ![1,2.5,5].includes(up)) ? up : '';
+  const base = parseFloat((document.getElementById(row.dataset.wid) || {}).value);
+  const calc = row.querySelector('.endup-calc');
+  if (calc) calc.innerHTML = (up && !isNaN(base)) ? `마지막 세트 → <b>${Math.round((base + up) * 100) / 100}kg</b>` : '';
+}
+function setEndUp(row, val) {
+  const title = row.dataset.wtitle;
+  const prev = weightInputs[title] || {};
+  const rec = WEIGHT_RECORDS[title];
+  let kg = prev.kg != null ? prev.kg : (rec && rec.kg != null ? rec.kg : null);
+  if (kg == null) { const b = parseFloat((document.getElementById(row.dataset.wid) || {}).value); kg = isNaN(b) ? 0 : b; }
+  const bothSide = prev.bothSide != null ? prev.bothSide : !!(rec && rec.bothSide);
+  const next = {kg, bothSide};
+  if (val != null && val > 0) next.endUp = val;
+  weightInputs[title] = next;
+  saveToStorage();
+  refreshEndUpRow(row);
+}
+
 function weightBadgeHTML(title) {
   const rec    = WEIGHT_RECORDS[title];
   const saved  = weightInputs[title];
@@ -1305,6 +1420,7 @@ function weightBadgeHTML(title) {
       <span class="weight-saved" id="${inputId}-saved">✓</span>
     </div>`;
   }
+  html += endUpRowHTML(title, inputId);
   return html;
 }
 
@@ -1340,7 +1456,7 @@ function updateProgress() {
   document.getElementById('prog-fill').style.background = p === 100 ? '#22c55e' : day.accent;
   document.getElementById('party-emoji').classList.toggle('hidden', p !== 100);
   // 오늘 운동 종료 버튼은 진행률과 무관하게 항상 저장 기능 유지 (스타일 고정)
-  const PROG_MAP = {dayA:'a', dayB:'b'};
+  const PROG_MAP = {dayA:'a', dayB:'b', dayC:'c'};
   Object.entries(PROG_MAP).forEach(([dk, id]) => {
     const el = document.getElementById('tabprog-' + id);
     if (el) el.style.width = calcProgress(dk) + '%';
@@ -1443,7 +1559,7 @@ function buildExBlock(b, bi, accent) {
 
   if (b.cutTag) wrap._cutTag = b.cutTag;
 
-  wrap.innerHTML = `<button class="ex-hdr" data-action="toggle-block"><div class="ex-hdr-left"><div class="ex-id" style="background:${idColor}22;border:1px solid ${idColor}44;color:${idColor}">${allDone?'✓':b.id}</div><div><div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap"><span class="ex-name ${allDone?'done':''}">${b.title}</span>${badges}</div><div class="ex-meta">${muscleDot(b.muscle)}${equipTag(b.equip)}<span class="progress-dot" style="color:${allDone?'#22c55e':'#475569'}">${doneSets}/${validSets.length}세트</span></div></div></div><div class="ex-hdr-right"><button class="bulk-btn" style="background:${bulkBg};border:1px solid ${bulkBorder};color:${bulkColor}" data-action="bulk-check" data-bi="${bi}" data-val="${!allDone}">${allDone?'✓ 완료':'일괄 완료'}</button><span class="rest-tag">${b.rest}</span><span class="chevron">▼</span></div></button><div class="ex-body">${weightBadgeHTML(b.title)}${illustHTML}<button class="next-set-btn ${allDone?'all-done':''}" data-action="next-set" data-bi="${bi}">${allDone ? '✓ 전체 완료됨' : '▶ 다음 세트 완료 (' + (doneSets+1) + '/' + validSets.length + '세트)'}</button><div style="overflow-x:auto"><table class="set-table"><thead><tr class="set-thead"><th>세트</th><th>횟수</th><th>RPE</th><th>포인트</th></tr></thead><tbody>${setRows}</tbody></table></div><div class="ex-tip" style="border-left-color:${isInjury?'#fbbf24':accent}">💡 ${b.tip}</div></div>`;
+  wrap.innerHTML = `<button class="ex-hdr" data-action="toggle-block"><div class="ex-hdr-left"><div class="ex-id" style="background:${idColor}22;border:1px solid ${idColor}44;color:${idColor}">${allDone?'✓':b.id}</div><div><div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap"><span class="ex-name ${allDone?'done':''}">${b.title}</span>${badges}</div><div class="ex-meta">${muscleDot(b.muscle)}${equipTag(b.equip)}<span class="progress-dot" style="color:${allDone?'#22c55e':'#475569'}">${doneSets}/${validSets.length}세트</span></div></div></div><div class="ex-hdr-right"><button class="bulk-btn" style="background:${bulkBg};border:1px solid ${bulkBorder};color:${bulkColor}" data-action="bulk-check" data-bi="${bi}" data-val="${!allDone}">${allDone?'✓ 완료':'일괄 완료'}</button><span class="rest-tag">${b.rest}</span><span class="chevron">▼</span></div></button><div class="ex-body">${weightBadgeHTML(b.title)}${illustHTML}<button class="next-set-btn ${allDone?'all-done':''}" data-action="next-set" data-bi="${bi}">${allDone ? '✓ 전체 완료됨' : '▶ 다음 세트 완료 (' + (doneSets+1) + '/' + validSets.length + '세트)'}</button><div style="overflow-x:auto"><table class="set-table"><thead><tr class="set-thead"><th>세트</th><th>횟수</th><th>RPE</th><th>포인트</th></tr></thead><tbody>${setRows}</tbody></table></div><div class="ex-tip" style="border-left-color:${isInjury?'#fbbf24':accent}">💡 ${b.tip}</div><div class="note-wrap"><div class="note-label">📝 코멘트</div><textarea class="note-ta" data-note-title="${escHtml(b.title)}" rows="2" placeholder="이 운동 메모 (세팅·느낌·중량 등, 줄바꿈 가능)">${escHtml(exerciseNotes[b.title] || '')}</textarea><div class="note-row"><span class="note-status">${exerciseNotes[b.title] ? '✓ 저장됨' : ''}</span><button class="note-save" data-action="note-save" data-note-title="${escHtml(b.title)}">저장</button></div></div></div>`;
   return wrap;
 }
 function toggleBlock(btn) {
@@ -1470,7 +1586,80 @@ function switchDay(dayKey) {
 }
 
 // ── 12. 메인 렌더 ─────────────────────────────────────────
+function escHtml(t) {
+  return String(t == null ? '' : t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── 운동별 코멘트 (운동명 기준, A/B/C형 공통) ──
+let _noteTimer = null;
+function setExerciseNote(title, val, statusEl) {
+  if (val && val.trim()) exerciseNotes[title] = val; else delete exerciseNotes[title];
+  if (statusEl) statusEl.textContent = '작성 중…';
+  clearTimeout(_noteTimer);
+  _noteTimer = setTimeout(() => { saveToStorage(); if (statusEl) statusEl.textContent = '✓ 자동 저장됨'; }, 700);
+}
+function saveExerciseNoteNow(title, wrapEl) {
+  const ta = wrapEl.querySelector('.note-ta');
+  const st = wrapEl.querySelector('.note-status');
+  clearTimeout(_noteTimer);
+  if (ta.value.trim()) exerciseNotes[title] = ta.value; else delete exerciseNotes[title];
+  saveToStorage();
+  if (st) st.textContent = '✓ 저장됨';
+  showToast('✓ 코멘트 저장');
+}
+
+// ── 컬러 테마 (라이트/다크) ──
+function applyTheme(mode) {
+  if (mode === 'light') document.documentElement.setAttribute('data-theme', 'light');
+  else document.documentElement.removeAttribute('data-theme');
+  try { localStorage.setItem('gym_theme', mode); } catch(e) {}
+  const l = document.getElementById('theme-light'), d = document.getElementById('theme-dark');
+  if (l) l.classList.toggle('active', mode === 'light');
+  if (d) d.classList.toggle('active', mode !== 'light');
+  const m = document.querySelector('meta[name="theme-color"]');
+  if (m) m.setAttribute('content', mode === 'light' ? '#f7f7ef' : '#080810');
+}
+(function initTheme() {
+  let t = 'dark';
+  try { if (localStorage.getItem('gym_theme') === 'light') t = 'light'; } catch(e) {}
+  applyTheme(t);
+})();
+
+function ensureDayKeys() {
+  Object.keys(ROUTINE).forEach(k => {
+    if (!checks[k]) checks[k] = {};
+    if (runDone[k] === undefined) runDone[k] = false;
+  });
+}
+
+// 일~토 기준 주간 진행 한 줄
+function updateWeekLine() {
+  const el = document.getElementById('week-line');
+  if (!el) return;
+  const pad = n => String(n).padStart(2, '0');
+  const fmt = dt => dt.getFullYear() + '-' + pad(dt.getMonth() + 1) + '-' + pad(dt.getDate());
+  const [y, m, d] = TODAY.split('-').map(Number);
+  const dow = new Date(y, m - 1, d).getDay();
+  const start = fmt(new Date(y, m - 1, d - dow));
+  const end   = fmt(new Date(y, m - 1, d - dow + 6));
+  const done = {};
+  let n = 0;
+  Object.keys(workoutHistory).forEach(dStr => {
+    const rec = workoutHistory[dStr];
+    if (dStr >= start && dStr <= end && rec && ROUTINE[rec.dayKey]) { done[rec.dayKey] = true; n++; }
+  });
+  let next;
+  if (!done.dayA) next = 'A형';
+  else if (!done.dayB) next = 'B형';
+  else if (!done.dayC) next = 'C형 (선택 · 격주 가능)';
+  else next = '이번 주 완료 🎉';
+  el.textContent = '📆 이번 주(일~토) ' + n + '/3 완료 · 다음 추천: ' + next;
+}
+
 function renderDay() {
+  ensureDayKeys();
+  setTimeout(() => document.querySelectorAll('.endup-row').forEach(refreshEndUpRow), 0);
+  updateWeekLine();
   document.getElementById('today-date').textContent = '📅 ' + TODAY;
   const isCalTab = activeDay === 'cal';
   const day = isCalTab ? null : ROUTINE[activeDay];
@@ -1479,6 +1668,7 @@ function renderDay() {
   const TAB_MAP = {
     dayA:  {col:'#f97316', id:'tab-a'},
     dayB:  {col:'#a78bfa', id:'tab-b'},
+    dayC:  {col:'#f472b6', id:'tab-c'},
     cal:   {col:'#22d3ee', id:'tab-cal'},
   };
   Object.entries(TAB_MAP).forEach(([dk, {col, id}]) => {
@@ -2071,7 +2261,7 @@ function renderCalendar() {
     const hasRec   = !!workoutHistory[dStr];
     const isSel    = dStr === calSelectedDate;
     const rec      = workoutHistory[dStr];
-    const DAY_LABEL_MAP = {dayA:'A', dayB:'B'};
+    const DAY_LABEL_MAP = {dayA:'A', dayB:'B', dayC:'C'};
     const dayLabel = hasRec ? (DAY_LABEL_MAP[rec.dayKey] || '?') : '';
     let cls = 'cal-day';
     if (dow === 0) cls += ' sun';
@@ -2181,9 +2371,10 @@ function buildCalDetail(dStr) {
     if (doneSets === 0) return; // 아무것도 안 했으면 생략
 
     const w = rec.weights && rec.weights[b.title];
-    const kgText = w && w.kg != null
+    let kgText = w && w.kg != null
       ? (w.bothSide ? `좌 ${w.kg}kg + 우 ${w.kg}kg` : `${w.kg}kg`)
       : '';
+    if (kgText && w.endUp) kgText += ` · 끝 +${w.endUp}kg`;
 
     blocks += `<div class="cal-record-block">
       <div class="cal-record-name">${b.title}</div>
@@ -2218,8 +2409,8 @@ function deleteHistoryRecord(dStr) {
   showModal(`${label} 기록을 삭제할까요?\n삭제 후 다시 운동하면 새로 저장됩니다.`, '삭제', '', () => {
     delete workoutHistory[dStr];
     if (dStr === TODAY) {
-      checks  = {dayA:{}, dayB:{}};
-      runDone = {dayA:false, dayB:false};
+      checks  = {dayA:{}, dayB:{}, dayC:{}};
+      runDone = {dayA:false, dayB:false, dayC:false};
     }
     saveToStorage();
     calSelectedDate = null;
@@ -2238,8 +2429,8 @@ function enterEditMode(dStr) {
     runDone[rec.dayKey] = rec.runDone || false;
   } else {
     // 기록 없는 날: 체크 초기화
-    checks  = {dayA:{}, dayB:{}};
-    runDone = {dayA:false, dayB:false};
+    checks  = {dayA:{}, dayB:{}, dayC:{}};
+    runDone = {dayA:false, dayB:false, dayC:false};
   }
   // 배너 표시
   const banner = document.getElementById('edit-banner');
@@ -2266,6 +2457,19 @@ function exitEditMode() {
 // ── 13. 이벤트 위임 (document 레벨 통합) ─────────────────
 document.addEventListener('click', function(e) {
   refreshSessionOnActivity();
+  // ── 끝무게up 칩 ─────────────────────────────────────────
+  const upChip = e.target.closest('.endup-chip');
+  if (upChip) {
+    const row = upChip.closest('.endup-row');
+    const t = upChip.dataset.endup;
+    if (t === 'clear') setEndUp(row, null);
+    else {
+      const v = parseFloat(t);
+      const cur = weightInputs[row.dataset.wtitle] && weightInputs[row.dataset.wtitle].endUp;
+      setEndUp(row, cur === v ? null : v);   // 같은 칩 다시 탭하면 해제
+    }
+    return;
+  }
   // ── 무게 저장 버튼 ──────────────────────────────────────
   const saveBtn = e.target.closest('.weight-save-btn');
   if (saveBtn) {
@@ -2277,7 +2481,9 @@ document.addEventListener('click', function(e) {
     if (!inp) return;
     const kg = parseFloat(inp.value);
     if (isNaN(kg) || kg < 0) return;
+    const _prevUp = weightInputs[title] && weightInputs[title].endUp;
     weightInputs[title] = {kg, bothSide: isBoth};
+    if (_prevUp) weightInputs[title].endUp = _prevUp;
     if (WEIGHT_RECORDS[title]) {
       WEIGHT_RECORDS[title].kg = kg;
       WEIGHT_RECORDS[title].bothSide = isBoth;
@@ -2450,6 +2656,13 @@ document.addEventListener('click', function(e) {
   }
 
   // ── 다음 세트 완료 (WU 포함, 순서대로 자동 체크) ────────
+  if (action === 'theme-light') { applyTheme('light'); return; }
+  if (action === 'theme-dark')  { applyTheme('dark');  return; }
+  if (action === 'note-save') {
+    saveExerciseNoteNow(calAction.dataset.noteTitle, calAction.closest('.note-wrap'));
+    return;
+  }
+
   if (action === 'next-set') {
     const bi = parseInt(calAction.dataset.bi);
     const b  = ROUTINE[activeDay].blocks[bi];
@@ -2551,6 +2764,30 @@ document.addEventListener('input', function(e) {
       keepEl.style.display  = 'none';
     }
   }
+});
+
+// 무게 입력 변경 시 끝무게 계산 갱신
+document.addEventListener('input', function(e) {
+  if (!e.target.classList || !e.target.classList.contains('weight-input')) return;
+  const body = e.target.closest('.ex-body');
+  if (!body) return;
+  const row = body.querySelector('.endup-row');
+  if (row) refreshEndUpRow(row);
+});
+
+// 끝무게up 직접 입력
+document.addEventListener('input', function(e) {
+  if (!e.target.classList || !e.target.classList.contains('endup-input')) return;
+  const row = e.target.closest('.endup-row');
+  const v = parseFloat(e.target.value);
+  setEndUp(row, isNaN(v) ? null : v);
+});
+
+// 코멘트 입력 → 메모리 즉시 반영(재렌더 시 유지) + 자동 저장
+document.addEventListener('input', function(e) {
+  if (!e.target.classList || !e.target.classList.contains('note-ta')) return;
+  const wrap = e.target.closest('.note-wrap');
+  setExerciseNote(e.target.dataset.noteTitle, e.target.value, wrap && wrap.querySelector('.note-status'));
 });
 
 // 파일 선택 (가져오기)
